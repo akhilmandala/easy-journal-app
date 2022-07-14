@@ -1,8 +1,9 @@
 {
   "expo": {
     "name": "ts-react-native-app",
-    "slug": "ts-react-native-app",
+    "slug": "emoji-journal-app",
     "version": "1.0.0",
+    "owner": "zustand117",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +19,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "leavesapp"
     },
     "android": {
       "adaptiveIcon": {
