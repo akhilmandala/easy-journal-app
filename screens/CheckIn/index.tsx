@@ -2,48 +2,58 @@ import EmojiCluster from "../../data/emoji_cluster.json";
 import SVG_ICONS, { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import React, { useState } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, Pressable } from "react-native";
 import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
-import { Circle, Svg } from "react-native-svg";
+import { Svg } from "react-native-svg";
+import { AntDesign as Icon } from "@expo/vector-icons";
 
-function generateMoodOptions() {
-  let options = [];
-  for (let cluster in EmojiCluster) {
-    let possibleEmojis = EmojiCluster[cluster];
-    let emoji_keys = Object.keys(possibleEmojis);
-    let randomEmoji =
-      possibleEmojis[emoji_keys[(emoji_keys.length * Math.random()) << 0]];
-    options.push(randomEmoji);
+// if this is called in a shuffle, the new emojis shouldn't be the same as the old ones
+// UNLESS it is a shuffle among a specific cluster - then only the "anchored" emoji should
+// stay the same
+function generateMoodOptions(shuffleOptions?: any) {
+  if (shuffleOptions) {
+    let { currentEmojis, selectedEmoji } = shuffleOptions;
+    if (selectedEmoji) {
+      // shuffle other options within selected emoji cluster
+    } else {
+      // just random shuffle, but make sure new elements are distinct from old ones
+    }
+    return
+  } else {
+    let options = [];
+    for (let cluster in EmojiCluster) {
+      let possibleEmojis = EmojiCluster[cluster];
+      let emoji_keys = Object.keys(possibleEmojis);
+      let randomEmoji =
+        possibleEmojis[emoji_keys[(emoji_keys.length * Math.random()) << 0]];
+      randomEmoji = { ...randomEmoji, cluster };
+      options.push(randomEmoji);
+    }
+    return options;
   }
-  return options;
 }
 
 export const CheckInEmojiSelection = ({ dimensions }) => {
   let { PI } = Math;
-  // let angles = [PI / 6, PI / 2, PI / 3, (2 * PI) / 3, (5 * PI) / 6, PI];
-  let angles = [0, 2 * PI / 6, 4 * PI / 6, 6 * PI / 6, 8 * PI / 6, 10 * PI / 6, 12 * PI / 6]
-  const windowWidthCenter = Dimensions.get("window").width;
-  const windowHeightCenter = Dimensions.get("window").height;
-  console.log(dimensions);
-  console.log(windowWidthCenter + " " + windowHeightCenter);
-  let radius = 100;
-  const onLayout = ({ nativeEvent }) => {
-    console.log(nativeEvent.layout);
-  };
+  let angles = [
+    0,
+    (2 * PI) / 6,
+    (4 * PI) / 6,
+    (6 * PI) / 6,
+    (8 * PI) / 6,
+    (10 * PI) / 6,
+    (12 * PI) / 6,
+  ];
 
-  let emojiSvgs = generateMoodOptions().map(({ unicode }) =>
+  let [options, setOptions] = useState(generateMoodOptions());
+
+  let emojiSvgs = options.map(({ unicode }) =>
     retrieveSVGAssetFromUnicode(unicode)
   );
-  console.log(emojiSvgs);
 
-  let emojiOptionPositions = angles.map((angle) => {
-    console.log(Math.cos(angle));
-    console.log(Math.sin(angle));
-    return {
-      x: dimensions.width / 2,
-      y: dimensions.height / 2,
-    };
-  });
+  let handleShuffle = () => {
+    setOptions(generateMoodOptions());
+  };
 
   return (
     <View
@@ -74,6 +84,13 @@ export const CheckInEmojiSelection = ({ dimensions }) => {
           </Svg>
         );
       })}
+      <Pressable
+        onPress={() => {
+          handleShuffle();
+        }}
+      >
+        <Icon size={40} name="swap" />
+      </Pressable>
     </View>
   );
 };
@@ -94,16 +111,18 @@ export const CheckInScreen = ({ setVisible }) => {
         height: "100%",
         width: "100%",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
       onLayout={onLayout}
     >
       <Text
         style={{
           fontSize: 24,
-          alignSelf: "center"
+          alignSelf: "center",
         }}
-      >How are you doing?</Text>
+      >
+        How are you doing?
+      </Text>
       <CheckInEmojiSelection dimensions={dimensions} />
       <Button onPress={() => setVisible(false)}>Check In</Button>
     </Card>
