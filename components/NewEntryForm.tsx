@@ -128,7 +128,7 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
   };
 
   const [draft, setDraft] = React.useState<JournalEntry>(entryDraft);
-
+  const DEFAULT_INITIAL_VALUES = { emotion: "", title: "", content: "" }
   return (
     <Card
       disabled={true}
@@ -140,52 +140,55 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
       }}
     >
       <Formik
-        initialValues={{ emotion: "", title: "", content: "" }}
+        initialValues={DEFAULT_INITIAL_VALUES}
         onSubmit={(values) => console.log(values)}
       >
-        {({ handleChange, handleBlur, handleSubmit, values }) => (
-          <ScrollView
-            style={styles.formContainer}
-            keyboardShouldPersistTaps="handled"
-          >
-            <Input
-              placeholder="Title"
-              onChangeText={handleChange("title")}
-              onBlur={handleBlur("title")}
-              value={values.title}
-            />
-            <EmojiPickerInput handleChange={handleChange} />
-            <Input
-              placeholder="Write whatever you need.."
-              size="large"
-              multiline={true}
-              textStyle={{ height: 400 }}
-              numberOfLines={20}
-              onChangeText={handleChange("content")}
-              onBlur={handleBlur("content")}
-              value={values.content}
-            />
-          </ScrollView>
+        {({ handleChange, handleBlur, values }) => (
+          <View>
+            <ScrollView
+              style={styles.formContainer}
+              keyboardShouldPersistTaps="handled"
+            >
+              <Input
+                placeholder="Title"
+                onChangeText={handleChange("title")}
+                onBlur={handleBlur("title")}
+                value={values.title}
+              />
+              <EmojiPickerInput handleChange={handleChange} />
+              <Input
+                placeholder="Write whatever you need.."
+                size="large"
+                multiline={true}
+                textStyle={{ height: 400 }}
+                numberOfLines={20}
+                onChangeText={handleChange("content")}
+                onBlur={handleBlur("content")}
+                value={values.content}
+              />
+            </ScrollView>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{
+                flex: 1,
+              }}
+              keyboardVerticalOffset={150}
+            >
+              <Button
+                onPress={() => {
+                  if (values !== DEFAULT_INITIAL_VALUES) {
+                    addEntry({ ...entryDraft, ...values });
+                  }
+                  setVisible(false);
+                }}
+                style={{}}
+              >
+                SUBMIT
+              </Button>
+            </KeyboardAvoidingView>
+          </View>
         )}
       </Formik>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          flex: 1,
-        }}
-        keyboardVerticalOffset={150}
-      >
-        <Button
-          onPress={() => {
-            handleSubmit();
-            addEntry({ ...entryDraft, ...values });
-            setVisible(false);
-          }}
-          style={{}}
-        >
-          SUBMIT
-        </Button>
-      </KeyboardAvoidingView>
     </Card>
   );
 };
