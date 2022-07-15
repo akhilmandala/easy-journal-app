@@ -1,5 +1,5 @@
 import { Text, Button, Card, Layout } from "@ui-kitten/components";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import { connect, useSelector } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
@@ -133,6 +133,7 @@ export default function Home({ navigation }: Props) {
           data={entries}
           renderItem={(entry) => <JournalEntryCardShort entry={entry} />}
           keyExtractor={(entry) => entry.id}
+          fadingEdgeLength={100}
         />
         <FadeToWhiteBottom />
       </View>
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     paddingTop: -5,
+
   },
   topContainer: {
     flexDirection: "row",
