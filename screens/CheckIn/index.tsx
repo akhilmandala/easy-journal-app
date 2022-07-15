@@ -6,6 +6,24 @@ import { StyleSheet, View, Dimensions, Pressable } from "react-native";
 import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
 import { Svg } from "react-native-svg";
 import { AntDesign as Icon } from "@expo/vector-icons";
+import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
+import { addCheckIn, CheckIn } from "../../redux/store";
+import uuid from "react-native-uuid";
+import dayjs from "dayjs";
+import { selectLatestEntryOrder } from "../../components/NewEntryForm";
+import { connect, Formik } from "formik";
+
+/**
+ * TODO:
+ * - send new check in action
+ * - create check ins history page
+ *  - should this be in the journal tab? maybe as a different line
+ *  - can add entry / check in filter
+ */
+
+const CheckInWidgetComponent = () => {
+  const dispatch = useDispatch();
+};
 
 // if this is called in a shuffle, the new emojis shouldn't be the same as the old ones
 // UNLESS it is a shuffle among a specific cluster - then only the "anchored" emoji should
@@ -18,7 +36,7 @@ function generateMoodOptions(shuffleOptions?: any) {
     } else {
       // just random shuffle, but make sure new elements are distinct from old ones
     }
-    return
+    return;
   } else {
     let options = [];
     for (let cluster in EmojiCluster) {
@@ -33,10 +51,14 @@ function generateMoodOptions(shuffleOptions?: any) {
   }
 }
 
-export const CheckInEmojiSelection = ({ dimensions }) => {
+export const CheckInEmojiSelectionComponent = ({
+  dimensions,
+  handleChange,
+  values,
+  ...props
+}) => {
   let { PI } = Math;
   let angles = [
-    0,
     (2 * PI) / 6,
     (4 * PI) / 6,
     (6 * PI) / 6,
@@ -45,14 +67,24 @@ export const CheckInEmojiSelection = ({ dimensions }) => {
     (12 * PI) / 6,
   ];
 
+  let [emotionChoice, setEmotionChoice] = useState("");
   let [options, setOptions] = useState(generateMoodOptions());
-
   let emojiSvgs = options.map(({ unicode }) =>
     retrieveSVGAssetFromUnicode(unicode)
   );
 
   let handleShuffle = () => {
     setOptions(generateMoodOptions());
+  };
+
+  let handleEmotionClick = (option) => {
+    if (emotionChoice == option.unicode) {
+      setEmotionChoice("");
+      props.formik.setFieldValue("emotion", "");
+    } else {
+      setEmotionChoice(option.unicode);
+      props.formik.setFieldValue("emotion", option.unicode);
+    }
   };
 
   return (
@@ -66,11 +98,11 @@ export const CheckInEmojiSelection = ({ dimensions }) => {
       }}
     >
       {angles.map((position, index) => {
-        console.log(index);
         return (
-          <Svg
-            height={"60px"}
-            width={"60px"}
+          <Pressable
+            onPress={() => {
+              handleEmotionClick(options[index])
+            }}
             style={{
               position: "absolute",
               transform: [
@@ -80,8 +112,10 @@ export const CheckInEmojiSelection = ({ dimensions }) => {
             }}
             key={index}
           >
-            {emojiSvgs[index]}
-          </Svg>
+            <Svg height={"60px"} width={"60px"}>
+              {emojiSvgs[index]}
+            </Svg>
+          </Pressable>
         );
       })}
       <Pressable
@@ -95,7 +129,17 @@ export const CheckInEmojiSelection = ({ dimensions }) => {
   );
 };
 
+const CheckInEmojiSelection = connect(CheckInEmojiSelectionComponent);
+
 export const CheckInScreen = ({ setVisible }) => {
+  const dispatch = useDispatch();
+  const [checkInDraft, setCheckInDraft] = useState({
+    id: String(uuid.v4()),
+    emotion: "",
+    date: dayjs().unix(),
+    order: useSelector(selectLatestEntryOrder) + 1,
+  } as CheckIn);
+
   let [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const onLayout = ({ nativeEvent }) => {
     let { width, height } = nativeEvent.layout;
@@ -106,26 +150,41 @@ export const CheckInScreen = ({ setVisible }) => {
   };
 
   return (
-    <Card
-      style={{
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      onLayout={onLayout}
+    <Formik
+      initialValues={{ emotion: "" }}
+      onSubmit={(values) => console.log(values)}
     >
-      <Text
-        style={{
-          fontSize: 24,
-          alignSelf: "center",
-        }}
-      >
-        How are you doing?
-      </Text>
-      <CheckInEmojiSelection dimensions={dimensions} />
-      <Button onPress={() => setVisible(false)}>Check In</Button>
-    </Card>
+      {({ handleChange, handleBlur, handleSubmit, values }) => (
+        <Card
+          style={{
+            height: "100%",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onLayout={onLayout}
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              alignSelf: "center",
+            }}
+          >
+            How are you doing?
+          </Text>
+          <CheckInEmojiSelection
+            dimensions={dimensions}
+            handleChange={handleChange}
+          />
+          <Button onPress={() => {
+            if(values.emotion !== "") {
+              dispatch(addCheckIn({newCheckIn: {...checkInDraft, ...values}}))
+            }
+            setVisible(false)
+          }} >Check In</Button>
+        </Card>
+      )}
+    </Formik>
   );
 };
 

@@ -1,27 +1,59 @@
 import { Text, Button, Card, Layout } from "@ui-kitten/components";
-import { View, StyleSheet,FlatList, Pressable } from "react-native";
+import { View, StyleSheet, FlatList, Pressable } from "react-native";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
-import { JOURNAL_ENTRY_FIXTURE_1 } from "../../fixture/entries"
+import { JOURNAL_ENTRY_FIXTURE_1 } from "../../fixture/entries";
 import { useSelector } from "react-redux";
-import * as dayjs from "dayjs"
-
-const selectRecentEntries = (state) => {
-  let entries = state.journalEntries.entries;
-  let latestEntryIds = state.journalEntries.latestEntryIds;
-  let recentEntries = latestEntryIds.map((entryId) => entries[entryId]);
-  recentEntries.reverse();
-  return recentEntries;
-};
+import * as dayjs from "dayjs";
+import { selectRecentEntries } from "../Home";
+import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
+import { Svg } from "react-native-svg";
+import { CheckIn } from "../../redux/store"
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
 }
 
+interface JournalTabFilter {
+  ascending: boolean;
+  upperDateBound: number;
+  lowerDateBound: number;
+  searchTerm: string;
+  displayedEntryType: string; // [both, journal_entries, check_ins]
+}
+
+const selectAllEntriesOrdered = (state) => {
+  let { checkIns, checkInOrder, entries, entryOrder } = state.journalEntries;
+
+  let entryIndex = 0;
+  let collatedEntries = checkInOrder.reduce((acc, id, checkInIndex) => {
+    let ordered_array = [...acc];
+    let checkIn = checkIns[id];
+    let entry = entries[entryOrder[entryIndex]];
+
+    while (entryIndex < entryOrder.length && entry.date > checkIn.date) {
+      ordered_array.push(entry);
+      entryIndex = entryIndex + 1;
+      entry = entries[entryOrder[entryIndex]];
+    }
+
+    ordered_array = ordered_array.concat([checkIn]);
+
+    if (checkInIndex == checkInOrder.length - 1) {
+      ordered_array = ordered_array.concat(
+        entryOrder.slice(entryIndex).map((id) => entries[id])
+      );
+    }
+
+    return ordered_array;
+  }, []);
+  return collatedEntries.reverse();
+};
+
 const Header = ({ title, date, emotion, ...props }) => (
   <View {...props}>
     <View>
-    <Text category="h6">{title}</Text>
-    <Text category="s1">{dayjs.unix(date).toString()}</Text>
+      <Text category="h6">{title}</Text>
+      <Text category="s1">{dayjs.unix(date).toString()}</Text>
     </View>
   </View>
 );
@@ -38,8 +70,8 @@ const Footer = (props) => (
 );
 
 const JournalEntryCardLong = ({ entry }) => {
-  console.log(entry);
-  let content = entry.item.content;
+  console.log(entry)
+  let content = entry.content;
   return (
     <View style={styles.cardContainer}>
       <Card
@@ -47,9 +79,9 @@ const JournalEntryCardLong = ({ entry }) => {
         header={(props) => (
           <Header
             {...props}
-            title={entry.item.title}
-            date={entry.item.date}
-            emotion={entry.item.emotion}
+            title={entry.title}
+            date={entry.date}
+            emotion={entry.emotion}
           />
         )}
         footer={Footer}
@@ -60,16 +92,58 @@ const JournalEntryCardLong = ({ entry }) => {
   );
 };
 
+export const CheckInCard = ({ checkIn, ...props }) => {
+  let { date, emotion } = checkIn;
+  let svg = retrieveSVGAssetFromUnicode(emotion);
+  return (
+    <Card style={styles.cardShort}>
+      <View
+        {...props}
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingVertical: 16,
+          paddingHorizontal: 24,
+        }}
+      >
+        <View style={{alignSelf: "center"}}>
+          <Text category="s1">{dayjs.unix(date).toString()}</Text>
+        </View>
+        <View>
+          <Svg
+            height={"40px"}
+            width={"40px"}
+            preserveAspectRatio="xMinYMin slice"
+          >
+            {svg}
+          </Svg>
+        </View>
+      </View>
+    </Card>
+  );
+};
+
 export default function Journal({ navigation }: Props) {
-  const entries = useSelector(selectRecentEntries);
+  const entries = useSelector(selectAllEntriesOrdered);
+  console.log(entries);
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
       <View style={styles.container}>
         {/** Recent entries */}
+        {/* <FilterBar /> */}
+
         <FlatList
           data={entries}
-          renderItem={(entry) => <JournalEntryCardLong entry={entry} />}
+          renderItem={(entry) => {
+            if(entry.item.content !== undefined) {
+              console.log("entry")
+              return <JournalEntryCardLong key={entry.item.id} entry={entry.item}></JournalEntryCardLong>
+            } else {
+              console.log("check in")
+              return <CheckInCard key={entry.item.id} checkIn={entry.item}></CheckInCard>
+            }
+          }}
           keyExtractor={(entry) => entry.id}
         />
       </View>
@@ -104,6 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     width: "98%",
     margin: 2,
+    justifyContent: "center"
   },
   footerContainer: {
     flexDirection: "row",

@@ -14,6 +14,7 @@ export const NewEntryWidget = () => {
         New Entry
       </Button>
 
+
       <Modal visible={visible} style={styles.newEntryFormContainer}>
           <NewEntryWidgetForm setVisible={() => setVisible(!visible)}/>
       </Modal>

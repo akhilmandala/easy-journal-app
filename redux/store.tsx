@@ -6,6 +6,33 @@ import {
 } from "@reduxjs/toolkit";
 import entries from "../fixture/entries";
 
+/** [last, 2nd last, 3rd last] */
+export const DEFAULT_CHECK_INS = {
+  "3": {
+    emotion: "1F973",
+    id: "3",
+    date: 1657231196,
+    order: 4,
+  },
+  "2": {
+    emotion: "1F929",
+    id: "2",
+    date: 1657227596,
+    order: 5,
+  },
+  "1": {
+    emotion: "1F970",
+    id: "1",
+    date: 1657213196,
+    order: 6,
+  },
+};
+export const DEMO_LATEST_CHECKIN_ORDER = [
+  "1",
+  "2",
+  "3"
+]
+
 export const DEMO_ENTRIES = {
     "6d969f39-2a30-4045-8e92-e02748774a54": {
         id: "6d969f39-2a30-4045-8e92-e02748774a54",
@@ -67,9 +94,10 @@ export interface CheckIn {
 }
 
 const initialState = {
-  checkIns: {},
+  checkIns: DEFAULT_CHECK_INS,
   entries: DEMO_ENTRIES,
   entryOrder: DEMO_LATEST_ENTRY_IDS,
+  checkInOrder: DEMO_LATEST_CHECKIN_ORDER,
   latestCheckInIds: [],
 };
 
@@ -135,17 +163,22 @@ const journalEntriesSlice = createSlice({
     addCheckIn(
       state,
       action: PayloadAction<{
-        checkInId: string;
         newCheckIn: CheckIn;
       }>
     ) {
-      let { checkInId, newCheckIn } = action.payload;
+      let { newCheckIn } = action.payload;
+      let {id} = newCheckIn
+      console.log(newCheckIn)
       return {
         ...state,
         checkIns: {
           ...state.checkIns,
-          [checkInId]: newCheckIn,
+          [id]: newCheckIn,
         },
+        checkInOrder: [
+          ...state.checkInOrder,
+          id
+        ]
       };
     },
     removeCheckIn(

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  Platform
+} from "react-native";
 import {
   Button,
   Card,
@@ -17,10 +24,9 @@ import { useSelector, connect as connectRedux } from "react-redux";
 import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { AntDesign as Icon } from "@expo/vector-icons";
 
-const selectLatestEntryOrder = (state) =>
+export const selectLatestEntryOrder = (state) =>
   state.journalEntries.entries.length > 0
-    ? state.journalEntries.entries[state.journalEntries.entryOrder.at(-1)]
-        .order + 1
+    ? state.journalEntries.entries[state.journalEntries.entryOrder.at(-1)].order
     : 0;
 
 export const EmojiPickerInputComponent = ({
@@ -124,65 +130,74 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
   const [draft, setDraft] = React.useState<JournalEntry>(entryDraft);
 
   return (
-    <Card
-      disabled={true}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "flex-start",
+        flex: 1
       }}
     >
-      <Formik
-        initialValues={{ emotion: "", title: "", content: "" }}
-        onSubmit={(values) => console.log(values)}
+      <Card
+        disabled={true}
+        style={{
+          height: "100%",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
       >
-        {({ handleChange, handleBlur, handleSubmit, values }) => (
-          <View style={styles.formContainer}>
-            <Input
-              placeholder="Title"
-              onChangeText={handleChange("title")}
-              onBlur={handleBlur("title")}
-              value={values.title}
-            />
-            <EmojiPickerInput handleChange={handleChange} />
-            <Input
-              placeholder="Write whatever you need.."
-              size="large"
-              multiline={true}
-              textStyle={{ minHeight: "70%" }}
-              numberOfLines={20}
-              onChangeText={handleChange("content")}
-              onBlur={handleBlur("content")}
-              value={values.content}
-            />
-            <Button
-              onPress={() => {
-                handleSubmit();
-                addEntry({ ...entryDraft, ...values });
-                setVisible(false);
-              }}
+        <Formik
+          initialValues={{ emotion: "", title: "", content: "" }}
+          onSubmit={(values) => console.log(values)}
+        >
+          {({ handleChange, handleBlur, handleSubmit, values }) => (
+            <ScrollView
+              style={styles.formContainer}
+              keyboardShouldPersistTaps="handled"
             >
-              SUBMIT
-            </Button>
-            <Button
-              onPress={() => {
-                setVisible(false);
-              }}
-            >
-              EXIT
-            </Button>
-          </View>
-        )}
-      </Formik>
-    </Card>
+              <Input
+                placeholder="Title"
+                onChangeText={handleChange("title")}
+                onBlur={handleBlur("title")}
+                value={values.title}
+              />
+              <EmojiPickerInput handleChange={handleChange} />
+              <Input
+                placeholder="Write whatever you need.."
+                size="large"
+                multiline={true}
+                textStyle={{ height: 400 }}
+                numberOfLines={20}
+                onChangeText={handleChange("content")}
+                onBlur={handleBlur("content")}
+                value={values.content}
+              />
+              <Button
+                onPress={() => {
+                  handleSubmit();
+                  addEntry({ ...entryDraft, ...values });
+                  setVisible(false);
+                }}
+              >
+                SUBMIT
+              </Button>
+              <Button
+                onPress={() => {
+                  setVisible(false);
+                }}
+              >
+                EXIT
+              </Button>
+            </ScrollView>
+          )}
+        </Formik>
+      </Card>
+    </KeyboardAvoidingView>
   );
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     addEntry: (entry) => {
-      console.log(entry);
       dispatch(addEntry({ entry }));
     },
   };

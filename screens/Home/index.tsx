@@ -10,7 +10,7 @@ import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
 import { NewCheckInWidget } from "../CheckIn";
 
-const selectRecentEntries = (state) => {
+export const selectRecentEntries = (state) => {
   let entries = state.journalEntries.entries;
   let entryOrder = state.journalEntries.entryOrder;
   let recentEntriesIds;
@@ -19,7 +19,6 @@ const selectRecentEntries = (state) => {
   } else {
     recentEntriesIds = entryOrder;
   }
-  console.log(recentEntriesIds);
   let recentEntries = recentEntriesIds.map((entryId) => entries[entryId]);
   recentEntries.reverse();
   return recentEntries;
@@ -86,7 +85,6 @@ const mapDispatchToProps = (dispatch) => {
 const Footer = connect(null, mapDispatchToProps)(FooterComponent);
 
 const JournalEntryCardShort = ({ entry }) => {
-  console.log(entry);
   let content = entry.item.content;
   var length = 400;
   var trimmedString =
@@ -120,7 +118,6 @@ const FadeToWhiteBottom = () => {
 
 export default function Home({ navigation }: Props) {
   const entries = useSelector(selectRecentEntries);
-  console.log(entries);
 
   return (
     <View style={styles.screen}>
