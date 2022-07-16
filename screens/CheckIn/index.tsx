@@ -48,11 +48,11 @@ export const CheckInWidgetHeader = () => {
         paddingHorizontal: 24,
       }}
     >
-      <View>
-        <Text category="h3" style={{ fontWeight: "600" }}>
+      <View style={{alignSelf: "center"}}>
+        <Text category="h5" style={{ fontWeight: "600" }}>
           Hello {user},
         </Text>
-        <Text category="h4" style={{ fontWeight: "600" }}>
+        <Text category="h5" style={{ fontWeight: "600" }}>
           how are you doing?
         </Text>
       </View>
@@ -110,13 +110,13 @@ export const CheckInWidgetComponent = () => {
   let filter = "week";
   console.log(checkIns);
   return (
-    <View style={{ width: "100%" }}>
+    <View style={{ width: "100%", alignSelf: "center", }}>
       <Card
         style={{
           borderRadius: 35,
-          width: "92%",
           marginTop: 10,
-          alignSelf: "center",
+          width: '95%',
+          alignSelf: "center"
         }}
         header={CheckInWidgetHeader}
         footer={NewCheckInWidget}
@@ -126,85 +126,79 @@ export const CheckInWidgetComponent = () => {
             flexDirection: "row",
             alignContent: "center",
             justifyContent: "space-between",
-            paddingVertical: 16,
           }}
         >
           <View style={{ justifyContent: "center" }}>
             <Text category="p1">You've checked in </Text>
-            <Text category="h3">{checkIns.length} times</Text>
+            <Text category="h6" style={{fontWeight: "600"}}>{checkIns.length} times</Text>
             <Text category="p1">over the past {filter}</Text>
           </View>
-          <View style={{ justifyContent: "center" }}>
+          <View style={{ justifyContent: "center", flexDirection: "row" }}>
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignContent: "center",
               }}
             >
               <Text
                 category="p1"
-                style={{ alignContent: "center", justifyContent: "center" }}
+                style={{ alignSelf: "center", justifyContent: "center" }}
               >
                 {positiveCheckIns.length}
               </Text>
               <Svg
-                height={"20px"}
-                width={"20px"}
+                height={"30px"}
+                width={"30px"}
                 preserveAspectRatio="xMinYMin slice"
-                viewbox="0 0 20 20"
+                viewbox="0 0 30 30"
               >
                 {retrieveSVGAssetFromUnicode("1F642")}
               </Svg>
-              <Text>checkins</Text>
             </View>
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignContent: "center",
               }}
             >
               <Text
                 category="p1"
-                style={{ alignContent: "center", justifyContent: "center" }}
+                style={{ alignSelf: "center", justifyContent: "center" }}
               >
                 {neutralCheckIns.length}
               </Text>
               <Svg
-                height={"20px"}
-                width={"20px"}
-                style={{}}
+                height={"30px"}
+                width={"30px"}
                 preserveAspectRatio="xMinYMin slice"
-                viewbox="0 0 20 20"
+                viewbox="0 0 30 30"
               >
                 {retrieveSVGAssetFromUnicode("1F610")}
               </Svg>
-              <Text>checkins</Text>
             </View>
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignContent: "center",
               }}
             >
               <Text
                 category="p1"
-                style={{ alignContent: "center", justifyContent: "center" }}
+                style={{ alignSelf: "center", justifyContent: "center" }}
               >
                 {negativeCheckIns.length}
               </Text>
               <Svg
-                height={"20px"}
-                width={"20px"}
-                style={{}}
+                height={"30px"}
+                width={"30px"}
                 preserveAspectRatio="xMinYMin slice"
-                viewbox="0 0 20 20"
+                viewbox="0 0 30 30"
               >
                 {retrieveSVGAssetFromUnicode("2639")}
               </Svg>
-              <Text>checkins</Text>
             </View>
           </View>
         </View>

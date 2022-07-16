@@ -6,11 +6,12 @@ import { store } from "./redux/store";
 import { ApplicationProvider, Layout, Text } from "@ui-kitten/components";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TabBar } from "./navigation";
+import { default as theme } from "./theme.json"
 
 export default function App() {
   return (
     <Provider store={store}>
-      <ApplicationProvider {...eva} theme={eva.light}>
+      <ApplicationProvider {...eva} theme={{...eva.light, ...theme}}>
         <SafeAreaProvider>
           <StatusBar />
           <TabBar

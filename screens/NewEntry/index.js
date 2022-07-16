@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Card, Layout, Modal, Text } from '@ui-kitten/components';
 import { NewEntryWidgetForm } from '../../components/NewEntryForm';
 
@@ -8,7 +8,7 @@ export const NewEntryWidget = () => {
   const [visible, setVisible] = React.useState(false);
 
   return (
-    <Layout style={styles.container} level='1'>
+    <View style={styles.container}>
 
       <Button onPress={() => setVisible(true)} style={styles.widgetButtonContainer}>
         New Entry
@@ -19,7 +19,7 @@ export const NewEntryWidget = () => {
           <NewEntryWidgetForm setVisible={() => setVisible(!visible)}/>
       </Modal>
 
-    </Layout>
+    </View>
   );
 };
 
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     minHeight: "5%",
     paddingTop: 10,
     width: "90%",
+    alignSelf: "center"
   },
   widgetButtonContainer: {
     borderRadius: 15

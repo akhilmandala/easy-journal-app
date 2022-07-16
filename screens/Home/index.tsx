@@ -43,8 +43,7 @@ const Header = ({ title, date, emotion, ...props }) => {
    * TODO: set this up for other places
    */
 
-
-  let svg = retrieveSVGAssetFromUnicode(emotion);
+  let svg = emotion ? retrieveSVGAssetFromUnicode(emotion) : null;
   return (
     <View
       {...props}
@@ -60,14 +59,16 @@ const Header = ({ title, date, emotion, ...props }) => {
         <Text category="s1">{local_date}</Text>
         <Text category="s1">{local_time}</Text>
       </View>
-      <View style={{alignSelf: "center"}}>
-        <Svg
-          height={"40px"}
-          width={"40px"}
-          preserveAspectRatio="xMinYMin slice"
-        >
-          {svg}
-        </Svg>
+      <View style={{ alignSelf: "center" }}>
+        {svg && (
+          <Svg
+            height={"40px"}
+            width={"40px"}
+            preserveAspectRatio="xMinYMin slice"
+          >
+            {svg}
+          </Svg>
+        )}
       </View>
     </View>
   );
@@ -130,54 +131,47 @@ const JournalEntryCardShort = ({ entry }) => {
   );
 };
 
-const FadeToWhiteBottom = () => {
-  return <View style={styles.fadeToWhiteContainer} />;
-};
-
 export default function Home({ navigation }: Props) {
   const entries = useSelector(selectRecentEntries);
 
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
-      <CheckInWidgetComponent />
-      <NewEntryWidget />
       <View style={styles.container}>
-        {/** Recent entries */}
         <FlatList
           style={{
-            width: "98%",
-            height: 400
+            height: 400,
           }}
           data={entries}
           renderItem={(entry) => <JournalEntryCardShort entry={entry} />}
           keyExtractor={(entry) => entry.id}
           fadingEdgeLength={100}
+          ListHeaderComponent={() => {
+            return (
+              <View style={{alignSelf: "center", width: "100%", justifyContent: "center"}}>
+                <CheckInWidgetComponent />
+                <NewEntryWidget />
+              </View>
+            );
+          }}
+          ListFooterComponent={() => (
+            <View
+              style={{height: 200}}
+            ></View>
+          )}
         />
-        <FadeToWhiteBottom />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  fadeToWhiteContainer: {
-    position: "relative",
-    overflow: "hidden",
-    backgroundRepeat: "no-repeat",
-    width: "100%",
-    height: "5%",
-    backgroundSize: "cover",
-    backgroundImage:
-      "linear-gradient(to top, rgba(255,255,255, 0), rgba(255,255,255, 1), 90%)",
-  },
   screen: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
-    backgroundColor: "rgb(255, 255, 255)",
   },
   container: {
     width: "100%",
@@ -185,19 +179,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     paddingTop: -5,
+    alignSelf: "center"
   },
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   cardContainer: {
-    padding: 10,
-    width: "100%",
+    width: "100%"
   },
   cardShort: {
     borderRadius: 35,
-    width: "98%",
+    width: "95%",
     margin: 2,
+    alignSelf: "center"
   },
   footerContainer: {
     flexDirection: "row",
