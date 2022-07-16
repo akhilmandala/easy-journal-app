@@ -7,13 +7,13 @@ import React, { useState } from "react";
 import { StyleSheet, View, Dimensions, Pressable } from "react-native";
 import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
 import { Svg } from "react-native-svg";
-import { AntDesign as Icon } from "@expo/vector-icons";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
 import { addCheckIn, CheckIn } from "../../redux/store";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { selectLatestEntryOrder } from "../../components/NewEntryForm";
 import { connect, Formik } from "formik";
+import { AntDesign as Icon } from "@expo/vector-icons";
 
 /**
  * TODO:
@@ -37,6 +37,7 @@ const selectRecentCheckInsWithinRange = (range) => (state) => {
 };
 
 export const CheckInWidgetHeader = () => {
+  let [visible, setVisible] = useState(false);
   let user = "Akhil";
   return (
     <View
@@ -54,6 +55,21 @@ export const CheckInWidgetHeader = () => {
         <Text category="h4" style={{ fontWeight: "600" }}>
           how are you doing?
         </Text>
+      </View>
+      <View style={{ justifyContent: "center", alignContent: "center" }}>
+        <Button
+          style={{
+            height: 64,
+            width: 64,
+            borderRadius: 7,
+          }}
+          onPress={() => setVisible(true)}
+        >
+          <Icon size={40} name="plus" color="white" />
+        </Button>
+        <Modal visible={visible} style={styles.newEntryFormContainer}>
+          <CheckInScreen setVisible={setVisible} />
+        </Modal>
       </View>
     </View>
   );
@@ -253,9 +269,11 @@ export const CheckInEmojiSelectionComponent = ({
     if (emotionChoice == option.unicode) {
       setEmotionChoice({ emoji: option.unicode, iconName: option.name });
       props.formik.setFieldValue("emotion", "");
+      props.formik.setFieldValue("iconName", "");
     } else {
       setEmotionChoice({ emoji: option.unicode, iconName: option.name });
       props.formik.setFieldValue("emotion", option.unicode);
+      props.formik.setFieldValue("iconName", option.name);
     }
   };
 
@@ -323,7 +341,7 @@ export const CheckInScreen = ({ setVisible }) => {
 
   return (
     <Formik
-      initialValues={{ emotion: "" }}
+      initialValues={{ emotion: "", iconName: "" }}
       onSubmit={(values) => console.log(values)}
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (

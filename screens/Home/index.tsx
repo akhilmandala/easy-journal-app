@@ -140,8 +140,8 @@ export default function Home({ navigation }: Props) {
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
-      <NewEntryWidget />
       <CheckInWidgetComponent />
+      <NewEntryWidget />
       <View style={styles.container}>
         {/** Recent entries */}
         <FlatList
