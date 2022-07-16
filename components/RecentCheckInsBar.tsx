@@ -12,6 +12,13 @@ import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { Svg, Circle } from "react-native-svg";
 import { DEFAULT_CHECK_INS } from "../redux/store";
 import { useSelector } from "react-redux";
+import EmojiCluster from "../data/emoji_cluster.json"
+
+/**
+ * TODO:
+ * - Start working on user defined emotion arousal / valence
+ * - Include emoji name in data, not just unicode (can be used to map to specific SVG)
+ */
 
 const styles = StyleSheet.create({
   container: {
@@ -66,7 +73,7 @@ const formatHour = (hour: number) => {
   }
 };
 
-const selectRecentCheckIns = (state) => {
+export const selectRecentCheckIns = (state) => {
   let checkIns = state.journalEntries.checkIns;
   let checkInOrder = state.journalEntries.checkInOrder;
   let recentCheckInIds;
@@ -78,6 +85,20 @@ const selectRecentCheckIns = (state) => {
   let recentCheckIns = recentCheckInIds.map((checkInId) => checkIns[checkInId]);
   return recentCheckIns;
 };
+
+// TODO: ADD OPTION TO CHANGE TIME DURATION
+export const selectCheckInsWithinRange = (state) => {
+  let {checkIns, checkInOrder} = state.journalEntries;
+  return checkInOrder.length
+}
+
+export const selectCheckInTypesAggregatedByEmotion = (state) => {
+  let checkIns = selectCheckInsWithinRange(state)
+  let clusters = Object.keys(EmojiCluster)
+  checkIns.map(checkIn => {
+    return []
+  })
+}
 
 export const RecentCheckInsToolBar: React.FC<Props> = ({ style }) => {
   let recentCheckIns = useSelector(selectRecentCheckIns);

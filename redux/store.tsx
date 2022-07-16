@@ -13,20 +13,24 @@ export const DEFAULT_CHECK_INS = {
     id: "3",
     date: 1657231196,
     order: 4,
+    iconName: "partying-face"
   },
   "2": {
     emotion: "1F929",
     id: "2",
     date: 1657227596,
     order: 5,
+    iconName: "star-struck"
   },
   "1": {
     emotion: "1F970",
     id: "1",
     date: 1657213196,
     order: 6,
+    iconName:"smiling-face-with-hearts"
   },
 };
+
 export const DEMO_LATEST_CHECKIN_ORDER = [
   "1",
   "2",
@@ -91,6 +95,8 @@ export interface CheckIn {
   date: number;
   /* The order of the entry in journal */
   order: number;
+  /** Unique name of reaction (for when different icon packs are used) */
+  iconName: string;
 }
 
 const initialState = {

@@ -5,10 +5,14 @@ import { connect, useSelector } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
 import { NewEntryWidget } from "../NewEntry";
 import * as dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import advanced from "dayjs/plugin/advancedFormat";
 import { removeEntry } from "../../redux/store";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
 import { NewCheckInWidget } from "../CheckIn";
+import { CheckInWidgetComponent } from "../CheckIn";
 
 export const selectRecentEntries = (state) => {
   let entries = state.journalEntries.entries;
@@ -29,20 +33,34 @@ interface Props {
 }
 
 const Header = ({ title, date, emotion, ...props }) => {
+  dayjs.extend(timezone);
+  dayjs.extend(advanced);
+  dayjs.extend(utc);
+
+  let local_date = dayjs.unix(date).tz().format("dddd, MMM D/YY");
+  let local_time = dayjs.unix(date).tz().format("h:m a");
+  /**
+   * TODO: set this up for other places
+   */
+
+
   let svg = retrieveSVGAssetFromUnicode(emotion);
   return (
-    <View {...props} style={{
-      flexDirection: "row",
-      justifyContent: "space-between",
-      paddingVertical: 16,
-      paddingHorizontal: 24
-
-    }}>
+    <View
+      {...props}
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+      }}
+    >
       <View>
         <Text category="h6">{title}</Text>
-        <Text category="s1">{dayjs.unix(date).toString()}</Text>
+        <Text category="s1">{local_date}</Text>
+        <Text category="s1">{local_time}</Text>
       </View>
-      <View>
+      <View style={{alignSelf: "center"}}>
         <Svg
           height={"40px"}
           width={"40px"}
@@ -91,7 +109,7 @@ const JournalEntryCardShort = ({ entry }) => {
     content.length > length
       ? content.substring(0, length - 3) + "..."
       : content.substring(0, length);
-      
+
   return (
     <View style={styles.cardContainer}>
       <Card
@@ -123,12 +141,13 @@ export default function Home({ navigation }: Props) {
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
       <NewEntryWidget />
-      <NewCheckInWidget />
+      <CheckInWidgetComponent />
       <View style={styles.container}>
         {/** Recent entries */}
         <FlatList
           style={{
-            width: "98%"
+            width: "98%",
+            height: 400
           }}
           data={entries}
           renderItem={(entry) => <JournalEntryCardShort entry={entry} />}
@@ -153,6 +172,7 @@ const styles = StyleSheet.create({
       "linear-gradient(to top, rgba(255,255,255, 0), rgba(255,255,255, 1), 90%)",
   },
   screen: {
+    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
@@ -165,7 +185,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     paddingTop: -5,
-
   },
   topContainer: {
     flexDirection: "row",
@@ -173,7 +192,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: 10,
-    width: "100%"
+    width: "100%",
   },
   cardShort: {
     borderRadius: 35,
