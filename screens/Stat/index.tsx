@@ -48,7 +48,7 @@ const AnimatedStyleUpdateExample = ({
   return (
     <View
       style={{
-        flex: 1,
+        width: 100,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
@@ -56,24 +56,29 @@ const AnimatedStyleUpdateExample = ({
     >
       <Pressable
         onPress={() => {
-          randomWidth.value = Math.random() * 50;
+          randomWidth.value += 38;
         }}
       >
         <View
           style={{
-            width: 100,
-            height: 50,
             backgroundColor: "rgb(68, 107, 237)",
             borderRadius: 5,
+            justifyContent: "flex-start",
             alignContent: "center",
-            justifyContent: "center",
             flexWrap: "wrap",
-            overflow: "hidden"
+            overflow: "hidden",
+            height: 40,
+            width: 80
           }}
         >
-          <Animated.View style={[style]}>
-            <Text style={{ flexWrap: "wrap" }}>filter</Text>
+          <View style={{
+            alignSelf: "flex-start",
+            paddingTop: 11,
+          }}>
+          <Animated.View style={[style, {flexDirection: "column"}]}>
+            {filterOptions.map(filter => <Text style={{ fontWeight: "600",fontSize:15, color:"white", paddingVertical: 10 }}>{filter}</Text>)}
           </Animated.View>
+          </View>
         </View>
       </Pressable>
     </View>
