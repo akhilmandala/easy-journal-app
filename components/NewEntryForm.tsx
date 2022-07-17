@@ -23,11 +23,7 @@ import { Formik, connect, getIn } from "formik";
 import { useSelector, connect as connectRedux } from "react-redux";
 import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { AntDesign as Icon } from "@expo/vector-icons";
-
-export const selectLatestEntryOrder = (state) =>
-  state.journalEntries.entries.length > 0
-    ? state.journalEntries.entries[state.journalEntries.entryOrder.at(-1)].order
-    : 0;
+import { selectLatestEntryOrder } from "../redux/store";
 
 export const EmojiPickerInputComponent = ({
   handleChange,
