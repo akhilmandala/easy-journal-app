@@ -242,3 +242,21 @@ export const store = configureStore({
 });
 
 export default journalEntriesSlice.reducer;
+
+export const selectRecentCheckInsWithinRange = (range) => (state) => {
+  let checkIns = state.journalEntries.checkIns;
+  let checkInOrder = state.journalEntries.checkInOrder;
+  let recentCheckInIds;
+  if (checkInOrder.length > range) {
+    recentCheckInIds = checkInOrder.slice(-range);
+  } else {
+    recentCheckInIds = checkInOrder;
+  }
+  let recentCheckIns = recentCheckInIds.map((checkInId) => checkIns[checkInId]);
+  return recentCheckIns;
+};
+
+export const selectLatestEntryOrder = (state) =>
+  state.journalEntries.entries.length > 0
+    ? state.journalEntries.entries[state.journalEntries.entryOrder.at(-1)].order
+    : 0;

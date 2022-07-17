@@ -11,7 +11,7 @@ import advanced from "dayjs/plugin/advancedFormat";
 import { removeEntry } from "../../redux/store";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
-import { NewCheckInWidget } from "../CheckIn";
+import { NewCheckInFormScreen } from "../CheckIn";
 import { CheckInWidgetComponent } from "../CheckIn";
 
 export const selectRecentEntries = (state) => {
