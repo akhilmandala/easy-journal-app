@@ -1,15 +1,28 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Button, Modal, Text } from "@ui-kitten/components";
-import AnimatedStyleUpdateExample from "../../Stat";
+import OptionScrollAnimatedButton from "../../../components/OptionScrollAnimatedButton";
 
-export const CheckInWidgetFooter = ({ filter, ...props }) => {
+export const CheckInWidgetFooter = ({
+  filterOptions,
+  currentFilterIndex,
+  setFilterIndex,
+  ...props
+}) => {
+  console.log(setFilterIndex)
   return (
     <View style={styles.container}>
-      <Text category="p2" style={{ fontWeight: "600" }}>
-        FILTER BY
+      <Text category="p2" style={{ fontWeight: "600", paddingRight: 5 }}>
+        FROM THE PAST
       </Text>
-      <AnimatedStyleUpdateExample />
+      <OptionScrollAnimatedButton
+        currentOptionIndex={currentFilterIndex}
+        options={filterOptions}
+        buttonStyle={styles.buttonContainer}
+        textStyle={styles.optionText}
+        scrollLength={24}
+        setOptionIndex={setFilterIndex}
+      />
     </View>
   );
 };
@@ -34,5 +47,22 @@ const styles = StyleSheet.create({
   textWrapper: {},
   widgetButtonText: {
     alignSelf: "center",
+  },
+  optionText: {
+    fontWeight: "600",
+    fontSize: 13,
+    paddingBottom: 14,
+    color: "white",
+  },
+  buttonContainer: {
+    backgroundColor: "#3366FF",
+    borderRadius: 5,
+    justifyContent: "flex-start",
+    alignContent: "center",
+    flexWrap: "wrap",
+    overflow: "hidden",
+    height: 40,
+    width: 80,
+    paddingTop: 12
   },
 });

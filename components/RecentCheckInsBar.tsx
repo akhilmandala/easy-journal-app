@@ -10,7 +10,7 @@ import { Text } from "@ui-kitten/components";
 import dayjs from "dayjs";
 import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { Svg, Circle } from "react-native-svg";
-import { DEFAULT_CHECK_INS } from "../redux/store";
+import { DEFAULT_CHECK_INS, selectCheckInsWithinRange, selectRecentCheckInsWithinRange } from "../redux/store";
 import { useSelector } from "react-redux";
 import EmojiCluster from "../data/emoji_cluster.json"
 
@@ -73,35 +73,9 @@ const formatHour = (hour: number) => {
   }
 };
 
-export const selectRecentCheckIns = (state) => {
-  let checkIns = state.journalEntries.checkIns;
-  let checkInOrder = state.journalEntries.checkInOrder;
-  let recentCheckInIds;
-  if (checkInOrder.length > 3) {
-    recentCheckInIds = checkInOrder.slice(-3);
-  } else {
-    recentCheckInIds = checkInOrder;
-  }
-  let recentCheckIns = recentCheckInIds.map((checkInId) => checkIns[checkInId]);
-  return recentCheckIns;
-};
-
-// TODO: ADD OPTION TO CHANGE TIME DURATION
-export const selectCheckInsWithinRange = (state) => {
-  let {checkIns, checkInOrder} = state.journalEntries;
-  return checkInOrder.length
-}
-
-export const selectCheckInTypesAggregatedByEmotion = (state) => {
-  let checkIns = selectCheckInsWithinRange(state)
-  let clusters = Object.keys(EmojiCluster)
-  checkIns.map(checkIn => {
-    return []
-  })
-}
-
 export const RecentCheckInsToolBar: React.FC<Props> = ({ style }) => {
-  let recentCheckIns = useSelector(selectRecentCheckIns);
+  let recentCheckIns = useSelector(selectRecentCheckInsWithinRange(3));
+  recentCheckIns.reverse()
   let recentCheckInSVGs = recentCheckIns.map((checkIn) => {
     let {emotion} = checkIn;
     return retrieveSVGAssetFromUnicode(emotion);
