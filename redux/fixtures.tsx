@@ -4,7 +4,7 @@ export const DEFAULT_CHECK_INS = {
       emotion: "1F973",
       id: "3",
       date: 1657231196,
-      order: 4,
+      order: 6,
       iconName: "partying-face",
     },
     "2": {
@@ -18,7 +18,7 @@ export const DEFAULT_CHECK_INS = {
       emotion: "1F970",
       id: "1",
       date: 1657213196,
-      order: 6,
+      order: 4,
       iconName: "smiling-face-with-hearts",
     },
   };
@@ -56,9 +56,9 @@ export const DEFAULT_CHECK_INS = {
   
   // Earliest - Latest
   export const DEMO_LATEST_ENTRY_IDS = [
-    "ef29985a-0d4f-491a-a1ce-397916b96305",
-    "88570707-5e20-4a0c-91cf-c0fd7753583b",
-    "6d969f39-2a30-4045-8e92-e02748774a54",
+    {id: "ef29985a-0d4f-491a-a1ce-397916b96305", date: 1657231192},
+    {id: "88570707-5e20-4a0c-91cf-c0fd7753583b", date: 1657227592},
+    {id: "6d969f39-2a30-4045-8e92-e02748774a54", date: 1657213192},
   ];
   
 

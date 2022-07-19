@@ -1,7 +1,5 @@
-import {
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import entries from "../../fixture/entries";
 import { DEMO_ENTRIES, DEMO_LATEST_ENTRY_IDS } from "../fixtures";
 import { selectRecentItemsInRange } from "../selectors";
 
@@ -18,11 +16,13 @@ export interface JournalEntry {
   date: number;
   /* The order of the entry in journal */
   order: number;
+  /** Labels */
+  labels: string[];
 }
 
 const initialState = {
-  journalEntries: DEMO_ENTRIES,
-  journalEntryOrder: DEMO_LATEST_ENTRY_IDS,
+  entries: DEMO_ENTRIES,
+  entryOrder: DEMO_LATEST_ENTRY_IDS,
 };
 
 export const journalEntriesSlice = createSlice({
@@ -42,7 +42,7 @@ export const journalEntriesSlice = createSlice({
           ...state.entries,
           [entry.id]: entry,
         },
-        entryOrder: [...state.entryOrder, {id: entry.id, date: entry.date}],
+        entryOrder: [...state.entryOrder, { id: entry.id, date: entry.date }],
       };
     },
     removeEntry(
@@ -61,7 +61,7 @@ export const journalEntriesSlice = createSlice({
       return {
         ...state,
         entries: filteredEntries,
-        entryOrder: recentEntries.filter(({id}) => id !== entryId),
+        entryOrder: recentEntries.filter(({ id }) => id !== entryId),
       };
     },
     editEntry(
@@ -83,24 +83,94 @@ export const journalEntriesSlice = createSlice({
   },
 });
 
-export const { addEntry, removeEntry, editEntry } = journalEntriesSlice.actions;
+export const selectJournalEntriesState = (state) => state.journalEntries;
+export const selectJournalEntries = (state) => state.journalEntries.entries;
+export const selectJournalEntryOrder = (state) =>
+  state.journalEntries.entryOrder;
 
-export const selectJournalEntriesState = (state) => {
-  return state.journalEntries;
+export const selectRecentEntriesWithinRange = createSelector(
+  [selectJournalEntryOrder, selectJournalEntries, (state, range) => range],
+  (entryOrder: [], entries: {}, range) => {
+    if (entryOrder.length > range) {
+      entryOrder.splice(range - 1);
+    }
+    let sortedEntries = entryOrder.map(({ id }) => entries[id]);
+    return sortedEntries;
+  }
+);
+
+export const selectMostRecentJournalEntry = createSelector(
+  [selectJournalEntryOrder, selectJournalEntries],
+  (entryOrder: [], entries: {}) => {
+    entries[entryOrder[entryOrder.length - 1]];
+  }
+);
+
+interface EntrySearchFilter {
+  ascending: boolean;
+  labels: string[];
+  dateRange: [number, number];
+  searchTerm: string;
 }
 
-export const selectMostRecentJournalEntry = (state) => {
-  let { journalEntries, journalEntryOrder } = selectJournalEntriesState(state)
-  return journalEntries[journalEntryOrder.at(-1).id]
-}
-
-export const selectRecentEntriesWithinRange = (range) => (state) => {
-  let entries = state.journalEntries.entries;
-  let entryOrder = state.journalEntries.entryOrder;
-  let recentEntries = selectRecentItemsInRange(range, entries, entryOrder)
-  return recentEntries;
+const hasLabel = (entry: JournalEntry, labels: string[]) =>
+  entry.labels.some((label) => labels.includes(label));
+const hasSearchTerm = (entry: JournalEntry, searchTerm: string) =>
+  entry.title.toLowerCase().includes(searchTerm) ||
+  entry.content.toLowerCase().includes(searchTerm);
+const withinDateRange = (entry: JournalEntry, dateRange: Number[]) => {
+  /**
+   * [0, X] means all entries up till X
+   * [X, 0] means all entries after X
+   * [X, Y] means all entries between X and Y
+   */
+  if (dateRange[0] == 0) {
+    return entry.date < dateRange[1];
+  }
+  if (dateRange[1] == 0) {
+    return entry.date > dateRange[0];
+  }
+  return entry.date > dateRange[0] && entry.date < dateRange[1];
 };
 
-const selectMostRecentEntry = state => {
-  return state.checkIns
-}
+export const selectEntriesWithFilter = createSelector(
+  [
+    selectJournalEntryOrder,
+    selectJournalEntries,
+    (state, filter: EntrySearchFilter) => filter,
+  ],
+  (
+    entryOrder: [],
+    entries: { string: JournalEntry },
+    { ascending, labels, dateRange, searchTerm }
+  ) => {
+    if (ascending) {
+      entryOrder.reverse();
+    }
+
+    let filteredEntries = Object.values(entries).filter(
+      (entry) =>
+        hasLabel(entry, labels) &&
+        hasSearchTerm(entry, searchTerm) &&
+        withinDateRange(entry, dateRange)
+    );
+    let remainingEntryIds = filteredEntries.map((entry) => entry.id);
+
+    let sortedFilteredEntries = entryOrder
+      .filter((id) => remainingEntryIds.includes(id))
+      .map((id) => filteredEntries[id]);
+
+    return sortedFilteredEntries;
+  }
+);
+
+export const searchEntries = (entries: JournalEntry[], searchTerm: string) => {
+  searchTerm = searchTerm.toLocaleLowerCase();
+  return entries.filter(
+    ({ title, content }) =>
+      title.toLowerCase().includes(searchTerm) ||
+      content.toLowerCase().includes(searchTerm)
+  );
+};
+
+export const { addEntry, removeEntry, editEntry } = journalEntriesSlice.actions;

@@ -3,9 +3,14 @@ import {
   createSlice,
   PayloadAction,
   combineReducers,
+  createSelector,
 } from "@reduxjs/toolkit";
-import { DEFAULT_CHECK_INS, DEMO_ENTRIES, DEMO_LATEST_CHECKIN_ORDER, DEMO_LATEST_ENTRY_IDS } from "../fixtures";
-import { selectRecentItemsInRange } from "../selectors";
+import {
+  DEFAULT_CHECK_INS,
+  DEMO_ENTRIES,
+  DEMO_LATEST_CHECKIN_ORDER,
+  DEMO_LATEST_ENTRY_IDS,
+} from "../fixtures";
 
 export interface CheckIn {
   /* Unique id of the entry */
@@ -22,11 +27,11 @@ export interface CheckIn {
 
 let initialState = {
   checkIns: DEFAULT_CHECK_INS,
-  checkInOrder: DEMO_LATEST_CHECKIN_ORDER
-}
+  checkInOrder: DEMO_LATEST_CHECKIN_ORDER,
+};
 
 export const checkInsSlice = createSlice({
-  name: "checkIns",
+  name: "checkInsSlice",
   initialState,
   reducers: {
     addCheckIn(
@@ -81,40 +86,19 @@ export const checkInsSlice = createSlice({
   },
 });
 
-/**
- *
- * SELECTORS
- */
+export const selectCheckInsState = (state) => state.checkInEntries;
+export const selectCheckIns = (state) => state.checkInEntries.checkIns;
+export const selectCheckInOrder = (state) => state.checkInEntries.checkInOrder;
 
-export const selectCheckInsState = (state) => {
-  return state.checkIns
-}
-
-export const selectRecentCheckInsWithinRange = (range) => (state) => {
-  let {checkIns, checkInOrder} = selectCheckInsState(state)
-  let recentCheckIns = selectRecentItemsInRange(range, checkIns, checkInOrder)
-};
-
-export const selectAllCheckInAfterDate = (date) => (state) => {
-  let {checkInOrder} = selectCheckInsState(state)
-  if(checkInOrder.length > 1) {
-    let filteredCheckIns = checkInOrder.reverse()
-    let mostRecentEntry = filteredCheckIns.findIndex(({date}) => date < date )
-    return filteredCheckIns.slice(0, mostRecentEntry - 1)
-  } else {
-    return state.journalEntries.checkIns
+export const selectCheckinsWithinRange = createSelector(
+  [selectCheckInOrder, selectCheckIns, (state, range) => range],
+  (checkInOrder, checkIns, range) => {
+    if (checkInOrder.length > range) {
+      checkInOrder.splice(range - 1);
+    }
+    let sortedEntries = checkInOrder.map(({ id }) => checkIns[id]);
+    return sortedEntries;
   }
-};
+);
 
-export const selectMostRecentCheckIn = (state) => {
-  let {checkIns, checkInOrder} = selectCheckInsState(state)
-  return checkIns[checkInOrder.at(-1).id]
-}
-
-export const selectCheckInTypesAggregatedByEmotion = (state) => {
-  let checkIns = selectRecentCheckInsWithinRange(state, 10);
-  let clusters = Object.keys(EmojiCluster);
-  checkIns.map((checkIn) => {
-    return [];
-  });
-};
+export const { addCheckIn, removeCheckIn } = checkInsSlice.actions;

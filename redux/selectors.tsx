@@ -28,7 +28,7 @@ export const selectAllUserInputsOrdered = (state) => {
   let { checkIns, checkInOrder } = selectCheckInsState(state)
   let { journalEntries, journalEntryOrder } = selectJournalEntriesState(state)
 
-  
+
   
   return collatedEntries.reverse();
 };
