@@ -10,7 +10,7 @@ import { Text } from "@ui-kitten/components";
 import dayjs from "dayjs";
 import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { Svg, Circle } from "react-native-svg";
-import { DEFAULT_CHECK_INS, selectCheckInsWithinRange, selectRecentCheckInsWithinRange } from "../redux/store";
+import { selectCheckinsWithinRange } from "../redux/checkIns/checkInsSlice";
 import { useSelector } from "react-redux";
 import EmojiCluster from "../data/emoji_cluster.json"
 
@@ -74,8 +74,8 @@ const formatHour = (hour: number) => {
 };
 
 export const RecentCheckInsToolBar: React.FC<Props> = ({ style }) => {
-  let recentCheckIns = useSelector(selectRecentCheckInsWithinRange(3));
-  recentCheckIns.reverse()
+  let recentCheckIns = useSelector(state => selectCheckinsWithinRange(state, 3));
+  console.log(recentCheckIns)
   let recentCheckInSVGs = recentCheckIns.map((checkIn) => {
     let {emotion} = checkIn;
     return retrieveSVGAssetFromUnicode(emotion);
@@ -146,10 +146,6 @@ export const RecentCheckInsToolBar: React.FC<Props> = ({ style }) => {
       </View>
     </View>
   );
-};
-
-RecentCheckInsToolBar.defaultProps = {
-  recentCheckIns: DEFAULT_CHECK_INS,
 };
 
 export default RecentCheckInsToolBar;

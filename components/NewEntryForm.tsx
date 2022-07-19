@@ -15,7 +15,7 @@ import {
   Text,
   Input,
 } from "@ui-kitten/components";
-import { addEntry, JournalEntry } from "../redux/store";
+import { addEntry, JournalEntry } from "../redux/journalEntries/journalEntriesSlice";
 import { Svg } from "react-native-svg";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
@@ -23,7 +23,7 @@ import { Formik, connect, getIn } from "formik";
 import { useSelector, connect as connectRedux } from "react-redux";
 import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
 import { AntDesign as Icon } from "@expo/vector-icons";
-import { selectLatestEntryOrder } from "../redux/store";
+import { selectMostRecentJournalEntry } from "../redux/journalEntries/journalEntriesSlice";
 
 export const EmojiPickerInputComponent = ({
   handleChange,
@@ -114,13 +114,14 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
   //TODO: Option to load previous draft
   let drafts;
   let id = String(uuid.v4());
+  let latestEntry = useSelector(selectMostRecentJournalEntry)
   let entryDraft: JournalEntry = {
     id,
     emotion: "",
     title: "",
     content: "",
     date: dayjs().unix(),
-    order: useSelector(selectLatestEntryOrder) + 1,
+    order: latestEntry.order + 1,
   };
 
   const [draft, setDraft] = React.useState<JournalEntry>(entryDraft);

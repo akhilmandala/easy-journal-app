@@ -92,13 +92,19 @@ export const selectCheckInOrder = (state) => state.checkInEntries.checkInOrder;
 
 export const selectCheckinsWithinRange = createSelector(
   [selectCheckInOrder, selectCheckIns, (state, range) => range],
-  (checkInOrder, checkIns, range) => {
+  (checkInOrder: [], checkIns, range) => {
     if (checkInOrder.length > range) {
-      checkInOrder.splice(range - 1);
+      checkInOrder = checkInOrder.slice(checkInOrder.length - range)
     }
+    console.log(checkInOrder)
     let sortedEntries = checkInOrder.map(({ id }) => checkIns[id]);
     return sortedEntries;
   }
+);
+
+export const selectLatestCheckIn = createSelector(
+  [selectCheckInOrder, selectCheckIns],
+  (checkInOrder, checkIns) => checkIns[checkInOrder[checkInOrder.length - 1].id]
 );
 
 export const { addCheckIn, removeCheckIn } = checkInsSlice.actions;

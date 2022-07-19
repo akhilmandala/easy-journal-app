@@ -21,34 +21,6 @@ interface JournalTabFilter {
   displayedEntryType: string; // [both, journal_entries, check_ins]
 }
 
-const selectAllEntriesOrdered = (state) => {
-  let { checkIns, checkInOrder, entries, entryOrder } = state.journalEntries;
-
-  let entryIndex = 0;
-  let collatedEntries = checkInOrder.reduce((acc, id, checkInIndex) => {
-    let ordered_array = [...acc];
-    let checkIn = checkIns[id];
-    let entry = entries[entryOrder[entryIndex]];
-
-    while (entryIndex < entryOrder.length && entry.date > checkIn.date) {
-      ordered_array.push(entry);
-      entryIndex = entryIndex + 1;
-      entry = entries[entryOrder[entryIndex]];
-    }
-
-    ordered_array = ordered_array.concat([checkIn]);
-
-    if (checkInIndex == checkInOrder.length - 1) {
-      ordered_array = ordered_array.concat(
-        entryOrder.slice(entryIndex).map((id) => entries[id])
-      );
-    }
-
-    return ordered_array;
-  }, []);
-  return collatedEntries.reverse();
-};
-
 const Header = ({ title, date, emotion, ...props }) => (
   <View {...props}>
     <View>

@@ -8,25 +8,11 @@ import * as dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import advanced from "dayjs/plugin/advancedFormat";
-import { removeEntry } from "../../redux/store";
+import { removeEntry, selectRecentEntriesWithinRange } from "../../redux/journalEntries/journalEntriesSlice";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
 import { NewCheckInFormScreen } from "../CheckIn";
 import { CheckInWidgetComponent } from "../CheckIn";
-
-export const selectRecentEntries = (state) => {
-  let entries = state.journalEntries.entries;
-  let entryOrder = state.journalEntries.entryOrder;
-  let recentEntriesIds;
-  if (entryOrder.length > 3) {
-    recentEntriesIds = entryOrder.slice(-3);
-  } else {
-    recentEntriesIds = entryOrder;
-  }
-  let recentEntries = recentEntriesIds.map((entryId) => entries[entryId]);
-  recentEntries.reverse();
-  return recentEntries;
-};
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
@@ -132,7 +118,8 @@ const JournalEntryCardShort = ({ entry }) => {
 };
 
 export default function Home({ navigation }: Props) {
-  const entries = useSelector(selectRecentEntries);
+  let entries = useSelector(state => selectRecentEntriesWithinRange(state, 3));
+  entries = entries.reverse()
 
   return (
     <View style={styles.screen}>
@@ -141,6 +128,7 @@ export default function Home({ navigation }: Props) {
         <FlatList
           style={{
             height: 400,
+            width: "100%",
           }}
           data={entries}
           renderItem={(entry) => <JournalEntryCardShort entry={entry} />}
@@ -172,6 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
+    width: "100%"
   },
   container: {
     width: "100%",

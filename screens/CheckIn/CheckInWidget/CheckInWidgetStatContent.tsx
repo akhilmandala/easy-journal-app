@@ -7,10 +7,10 @@ import { StyleSheet, View } from "react-native";
 import { Card, Text } from "@ui-kitten/components";
 import { Svg } from "react-native-svg";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
-import { CheckIn, selectRecentCheckInsWithinRange } from "../../../redux/store";
+import { selectCheckinsWithinRange } from "../../../redux/checkIns/checkInsSlice";
 
 export const CheckInWidgetStatComponent = ({currentFilter}) => {
-  const checkIns = useSelector(selectRecentCheckInsWithinRange(10));
+  const checkIns = useSelector(state => selectCheckinsWithinRange(state, 10));
   let positiveCheckIns = checkIns.filter((checkIn: CheckIn) =>
     [].concat
       .apply(

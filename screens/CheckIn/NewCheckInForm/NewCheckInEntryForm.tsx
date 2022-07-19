@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Text } from "@ui-kitten/components";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
-import { addCheckIn, CheckIn, selectLatestEntryOrder } from "../../../redux/store";
+import { addCheckIn, CheckIn, selectLatestCheckIn } from "../../../redux/checkIns/checkInsSlice";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { Formik } from "formik";
@@ -10,11 +10,12 @@ import { CheckInOptionSelection } from "./CheckInOptionSelection";
 
 export const NewCheckInFormScreen = ({ setVisible }) => {
     const dispatch = useDispatch();
+    let latestCheckIn = useSelector(selectLatestCheckIn)
     const [checkInDraft, setCheckInDraft] = useState({
       id: String(uuid.v4()),
       emotion: "",
       date: dayjs().unix(),
-      order: useSelector(selectLatestEntryOrder) + 1,
+      order: latestCheckIn.order + 1,
     } as CheckIn);
   
     let [dimensions, setDimensions] = useState({ width: 0, height: 0 });

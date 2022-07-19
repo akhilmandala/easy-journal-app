@@ -92,7 +92,7 @@ export const selectRecentEntriesWithinRange = createSelector(
   [selectJournalEntryOrder, selectJournalEntries, (state, range) => range],
   (entryOrder: [], entries: {}, range) => {
     if (entryOrder.length > range) {
-      entryOrder.splice(range - 1);
+      entryOrder = entryOrder.slice(entryOrder.length - range)
     }
     let sortedEntries = entryOrder.map(({ id }) => entries[id]);
     return sortedEntries;
@@ -102,7 +102,9 @@ export const selectRecentEntriesWithinRange = createSelector(
 export const selectMostRecentJournalEntry = createSelector(
   [selectJournalEntryOrder, selectJournalEntries],
   (entryOrder: [], entries: {}) => {
-    entries[entryOrder[entryOrder.length - 1]];
+    console.log(entries)
+    console.log(entryOrder)
+    return entries[entryOrder[entryOrder.length - 1].id];
   }
 );
 
