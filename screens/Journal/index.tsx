@@ -4,10 +4,9 @@ import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import { JOURNAL_ENTRY_FIXTURE_1 } from "../../fixture/entries";
 import { useSelector } from "react-redux";
 import * as dayjs from "dayjs";
-import { selectRecentEntries } from "../Home";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
-import { CheckIn } from "../../redux/store"
+import { selectRecentEntriesWithinRange } from "../../redux/journalEntries/journalEntriesSlice";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
@@ -96,27 +95,26 @@ export const CheckInCard = ({ checkIn, ...props }) => {
 };
 
 export default function Journal({ navigation }: Props) {
-  const entries = useSelector(selectAllEntriesOrdered);
+  const entries = useSelector(state => selectRecentEntriesWithinRange(state, 100));
+  entries.reverse()
   console.log(entries);
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
       <View style={styles.container}>
-        {/** Recent entries */}
         {/* <FilterBar /> */}
-
         <FlatList
           data={entries}
-          renderItem={(entry) => {
-            if(entry.item.content !== undefined) {
-              console.log("entry")
-              return <JournalEntryCardLong key={entry.item.id} entry={entry.item}></JournalEntryCardLong>
-            } else {
-              console.log("check in")
-              return <CheckInCard key={entry.item.id} checkIn={entry.item}></CheckInCard>
-            }
-          }}
+          renderItem={(entry) => 
+              <JournalEntryCardLong key={entry.item.id} entry={entry.item}></JournalEntryCardLong>
+            
+          }
           keyExtractor={(entry) => entry.id}
+          ListFooterComponent={() => (
+            <View
+              style={{height: 200}}
+            ></View>
+          )}
         />
       </View>
     </View>

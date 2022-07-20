@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Button, Modal, Text } from "@ui-kitten/components";
-import OptionScrollAnimatedButton from "../../../components/OptionScrollAnimatedButton";
+import CheckInWidgetFilterSelector from "./CheckInWidgetFilterSelector";
 
 export const CheckInWidgetFooter = ({
   filterOptions,
@@ -15,7 +15,7 @@ export const CheckInWidgetFooter = ({
       <Text category="p2" style={{ fontWeight: "600", paddingRight: 5 }}>
         FROM THE PAST
       </Text>
-      <OptionScrollAnimatedButton
+      <CheckInWidgetFilterSelector
         currentOptionIndex={currentFilterIndex}
         options={filterOptions}
         buttonStyle={styles.buttonContainer}

@@ -10,7 +10,7 @@ import { useState } from "react";
 import { View, Button, Pressable, ScrollView, StyleSheet } from "react-native";
 import { IndexPath, Text, Select, SelectItem } from "@ui-kitten/components";
 
-const OptionScrollAnimatedButton = ({
+const CheckInWidgetFilterSelector = ({
   options,
   currentOptionIndex,
   handler,
@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default OptionScrollAnimatedButton;
+export default CheckInWidgetFilterSelector;

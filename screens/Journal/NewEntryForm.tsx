@@ -15,15 +15,15 @@ import {
   Text,
   Input,
 } from "@ui-kitten/components";
-import { addEntry, JournalEntry } from "../redux/journalEntries/journalEntriesSlice";
+import { addEntry, JournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
 import { Svg } from "react-native-svg";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { Formik, connect, getIn } from "formik";
 import { useSelector, connect as connectRedux } from "react-redux";
-import { retrieveSVGAssetFromUnicode } from "../utils/SVGImports";
+import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { AntDesign as Icon } from "@expo/vector-icons";
-import { selectMostRecentJournalEntry } from "../redux/journalEntries/journalEntriesSlice";
+import { selectMostRecentJournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
 
 export const EmojiPickerInputComponent = ({
   handleChange,
