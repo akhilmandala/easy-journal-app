@@ -78,7 +78,8 @@ const styles = StyleSheet.create({
     flex: 10,
     alignItems: "center",
     flexDirection: "column",
-    paddingTop: -5,
+    paddingTop: 10,
+    alignSelf: "center"
   },
   topContainer: {
     flexDirection: "row",

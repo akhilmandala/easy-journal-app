@@ -8,6 +8,7 @@ import {
 	Switch,
 	TouchableWithoutFeedback,
 	Keyboard,
+	Button,
 } from "react-native";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -36,7 +37,7 @@ export function LabelSearchDropdownMenu() {
 				setChosenLabels(chosenLabels.filter((cLabel) => cLabel !== label));
 			}}
 		>
-			<View style={{ backgroundColor: "#DDDDDD", paddingHorizontal: 5 }}>
+			<View style={{ backgroundColor: "#D2D2D2", paddingHorizontal: 5 }}>
 				<Text>{label}</Text>
 			</View>
 		</Pressable>
@@ -47,6 +48,7 @@ export function LabelSearchDropdownMenu() {
 		return (
 			<TouchableOpacity
 				style={{
+          width: "100%",
 					alignItems: "center",
 					backgroundColor: "#DDDDDD",
 					padding: 10,
@@ -70,7 +72,9 @@ export function LabelSearchDropdownMenu() {
 	}
 
 	return (
-		<View>
+		<View style={{
+      alignSelf: "center"
+    }}>
 			<Modal
 				visible={labelMenuVisible}
 				style={{
@@ -81,33 +85,50 @@ export function LabelSearchDropdownMenu() {
 			>
 				<View
 					style={{
+            padding: 10,
 						height: "100%",
 						width: "100%",
 						justifyContent: "center",
 						alignItems: "center",
 					}}
 				>
-					<View>
-						<View style={{ height: 40, width: 200, flexDirection: "row" }}>
-							{chosenLabels.map((label) => (
-								<LabelTag label={label} />
-							))}
-						</View>
-						<View style={{ height: 40, width: 200, borderRadius: 10, borderColor: "black", overflow: 'hidden', borderWidth: 2, marginVertical: 10 }}>
-							<TextInput
-								placeholder="Search label"
-								value={labelSearchTerm}
-								onChangeText={(text) => setLabelSearchTerm(text)}
-                style={{alignSelf: "center", padding: 10, backgroundColor: '#ffffff',}}
-							></TextInput>
-						</View>
-						<FlatList
-							data={possibleLabelsToPick}
-							renderItem={renderItem}
-							keyExtractor={(item) => item.id}
-							style={{ height: 300 }}
-						/>
+					<View style={{ height: 40, width: "100%", flexDirection: "row" }}>
+						{chosenLabels.map((label) => (
+							<LabelTag label={label} />
+						))}
 					</View>
+					<View
+						style={{
+							height: 40,
+							width: "100%",
+							borderRadius: 10,
+							borderColor: "black",
+							overflow: "hidden",
+							borderWidth: 2,
+							marginVertical: 10,
+						}}
+					>
+						<TextInput
+							placeholder="Search label"
+							value={labelSearchTerm}
+							onChangeText={(text) => setLabelSearchTerm(text)}
+							style={{
+								alignSelf: "center",
+								padding: 10,
+								backgroundColor: "#ffffff",
+							}}
+						></TextInput>
+					</View>
+					<FlatList
+            style={{width: "100%"}}
+						data={possibleLabelsToPick}
+						renderItem={renderItem}
+						keyExtractor={(item) => item.id}
+					/>
+				<Button
+					onPress={() => setLabelMenuVisible(!labelMenuVisible)}
+					title={"APPLY"}
+				></Button>
 				</View>
 			</Modal>
 			<Pressable onPress={() => setLabelMenuVisible(!labelMenuVisible)}>
@@ -117,7 +138,18 @@ export function LabelSearchDropdownMenu() {
 	);
 }
 
-function DateRangePicker() {}
+function DateRangePicker() {
+  let [datePickerMenuVisible, setDatePickerMenuVisible] = useState(false)
+
+  return (
+    <View>
+      <Modal></Modal>
+      <Pressable onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}>
+        <Icon name="clockcircle" size={25}></Icon>
+      </Pressable>
+    </View>
+  )
+}
 
 function EntrySearchBar() {}
 
@@ -131,24 +163,17 @@ export function FilterBar() {
 	return (
 		<View
 			style={{
-				alignSelf: "center",
-				width: "60%",
+				width: "100%",
 				flexDirection: "row",
-				justifyContent: "center",
+				justifyContent: "space-evenly",
 				alignItems: "center",
 			}}
 		>
-			<Switch
-				style={{ alignSelf: "center" }}
-				trackColor={{ false: "#767577", true: "#81b0ff" }}
-				thumbColor={filters.ascending ? "#f5dd4b" : "#f4f3f4"}
-				ios_backgroundColor="#3e3e3e"
-				onValueChange={() =>
-					setFilters({ ...filters, ascending: !filters.ascending })
-				}
-				value={filters.ascending}
-			/>
+      <Pressable onPress={() => setFilters({...filters, ascending: !filters.ascending})}>
+				{filters.ascending ? <Icon name="caretup" size={25}></Icon> : <Icon name="caretdown" size={25}></Icon>}
+			</Pressable>
 			<LabelSearchDropdownMenu />
+      <DateRangePicker />
 		</View>
 	);
 }
