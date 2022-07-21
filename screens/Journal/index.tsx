@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   Text,
+  Switch,
 } from "react-native";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import { JOURNAL_ENTRY_FIXTURE_1 } from "../../fixture/entries";
@@ -22,153 +23,12 @@ import {
 } from "../../redux/journalEntries/journalEntriesSlice";
 import { useState } from "react";
 import uuid from "react-native-uuid";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { JournalEntryCardLong } from "../Home";
+import { FilterBar } from "./FilterBar";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
-}
-
-const Header = ({ title, date, emotion, ...props }) => (
-  <View {...props}>
-    <View>
-      <Text category="h6">{title}</Text>
-      <Text category="s1">{dayjs.unix(date).toString()}</Text>
-    </View>
-  </View>
-);
-
-const Footer = (props) => (
-  <View {...props} style={[props.style, styles.footerContainer]}>
-    <Button style={styles.footerControl} size="small" status="basic">
-      ARCHIVE
-    </Button>
-    <Button style={styles.footerControl} size="small">
-      EDIT
-    </Button>
-  </View>
-);
-
-const JournalEntryCardLong = ({ entry }) => {
-  console.log(entry);
-  let content = entry.content;
-  return (
-    <View style={styles.cardContainer}>
-      <Card
-        style={styles.cardShort}
-        header={(props) => (
-          <Header
-            {...props}
-            title={entry.title}
-            date={entry.date}
-            emotion={entry.emotion}
-          />
-        )}
-        footer={Footer}
-      >
-        <Text>{content}</Text>
-      </Card>
-    </View>
-  );
-};
-
-export const CheckInCard = ({ checkIn, ...props }) => {
-  let { date, emotion } = checkIn;
-  let svg = retrieveSVGAssetFromUnicode(emotion);
-  return (
-    <Card style={styles.cardShort}>
-      <View
-        {...props}
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingVertical: 16,
-          paddingHorizontal: 24,
-        }}
-      >
-        <View style={{ alignSelf: "center" }}>
-          <Text category="s1">{dayjs.unix(date).toString()}</Text>
-        </View>
-        <View>
-          <Svg
-            height={"40px"}
-            width={"40px"}
-            preserveAspectRatio="xMinYMin slice"
-          >
-            {svg}
-          </Svg>
-        </View>
-      </View>
-    </Card>
-  );
-};
-
-const SearchBar = ({ searchTerm, setSearchTerm }) => {
-  return (
-    <View>
-      <TextInput
-        value={searchTerm}
-        onChangeText={(text) => setSearchTerm(text)}
-      ></TextInput>
-    </View>
-  );
-};
-export function LabelSearchDropdownMenu() {
-  const labels: String[] = useSelector(selectAllJournalEntryLabels);
-  const [labelSearchTerm, setLabelSearchTerm] = useState("");
-  let possibleLabelsToPick = labels
-    .filter((label) =>
-      label.toLowerCase().includes(labelSearchTerm.toLowerCase())
-    )
-    .map((label) => ({ id: uuid.v4().toString(), item: label }));
-  console.log(possibleLabelsToPick);
-
-  const renderOption = ({ item }) => {
-    <View style={{  }}>
-      <Text>{item}</Text>
-    </View>;
-  };
-
-  return (
-    <View
-      style={{
-        height: 200,
-        backgroundColor: "blue",
-        width: 500,
-        position: "absolute",
-        bottom: 0,
-      }}
-    >
-      {/* <SearchBar
-        searchTerm={labelSearchTerm}
-        setSearchTerm={setLabelSearchTerm}
-      /> */}
-      <FlatList
-        data={possibleLabelsToPick}
-        renderItem={renderOption}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
-  );
-}
-
-function DateRangePicker() {}
-
-function EntrySearchBar() {}
-
-export function FilterBar() {
-  let [filters, setFilters] = useState({
-    ascending: false,
-    labels: [],
-    dateRange: [0, dayjs().unix()],
-    searchTerm: "",
-  });
-  return (
-    <View>
-      <Button>{ascending ? "ASC" : "DESC"}</Button>
-      <LabelSearchDropdownMenu />
-      <DateRangePicker />
-      <EntrySearchBar />
-    </View>
-  );
 }
 
 export default function Journal({ navigation }: Props) {
@@ -180,20 +40,27 @@ export default function Journal({ navigation }: Props) {
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
-      <View style={styles.container}>
-        {/* <FilterBar /> */}
-        <FlatList
-          data={entries}
-          renderItem={(entry) => (
-            <JournalEntryCardLong
-              key={entry.item.id}
-              entry={entry.item}
-            ></JournalEntryCardLong>
-          )}
-          keyExtractor={(entry) => entry.id}
-          ListFooterComponent={() => <View style={{ height: 200 }}></View>}
-        />
-      </View>
+      <SafeAreaView
+        style={{
+          paddingTop: 72,
+        }}
+      >
+        <FilterBar />
+        <View style={styles.container}>
+          {/* <FilterBar /> */}
+          <FlatList
+            data={entries}
+            renderItem={(entry) => (
+              <JournalEntryCardLong
+                key={entry.item.id}
+                entry={entry.item}
+              ></JournalEntryCardLong>
+            )}
+            keyExtractor={(entry) => entry.id}
+            ListFooterComponent={() => <View style={{ height: 200 }}></View>}
+          />
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
