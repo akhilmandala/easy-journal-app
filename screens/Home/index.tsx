@@ -123,6 +123,29 @@ const JournalEntryCardShort = ({ entry }) => {
   );
 };
 
+export const JournalEntryCardLong = ({ entry }) => {
+  console.log(entry);
+  let content = entry.content;
+  return (
+    <View style={styles.cardContainer}>
+      <Card
+        style={styles.cardShort}
+        header={(props) => (
+          <Header
+            {...props}
+            title={entry.title}
+            date={entry.date}
+            emotion={entry.emotion}
+          />
+        )}
+        footer={Footer}
+      >
+        <Text>{content}</Text>
+      </Card>
+    </View>
+  );
+};
+
 export default function Home({ navigation }: Props) {
   let entries = [].concat(useSelector((state) =>
     selectRecentEntriesWithinRange(state, 3)
@@ -158,7 +181,6 @@ export default function Home({ navigation }: Props) {
           }}
           ListFooterComponent={() => <View style={{ height: 200 }}></View>}
         />
-       <LabelSearchDropdownMenu />
       </SafeAreaView>
     </View>
   );
