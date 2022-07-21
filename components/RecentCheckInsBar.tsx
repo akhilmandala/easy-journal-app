@@ -22,6 +22,8 @@ import EmojiCluster from "../data/emoji_cluster.json"
 
 const styles = StyleSheet.create({
   container: {
+    position: "absolute",
+    top: 0,
     paddingTop: 48,
     paddingBottom: 12,
     flexDirection: "row",

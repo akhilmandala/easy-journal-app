@@ -33,6 +33,7 @@ export const DEFAULT_CHECK_INS = {
       emotion: "1F970",
       date: 1657213192,
       order: 3,
+      labels: []
     },
     "88570707-5e20-4a0c-91cf-c0fd7753583b": {
       id: "88570707-5e20-4a0c-91cf-c0fd7753583b",
@@ -42,6 +43,7 @@ export const DEFAULT_CHECK_INS = {
       emotion: "1F929",
       date: 1657227592,
       order: 2,
+      labels: ["goal"]
     },
     "ef29985a-0d4f-491a-a1ce-397916b96305": {
       id: "ef29985a-0d4f-491a-a1ce-397916b96305",
@@ -51,6 +53,7 @@ export const DEFAULT_CHECK_INS = {
       emotion: "1F973",
       date: 1657231192,
       order: 1,
+      labels: ["important", "goal"]
     },
   };
   

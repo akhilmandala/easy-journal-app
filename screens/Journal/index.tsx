@@ -1,23 +1,30 @@
-import { Text, Button, Card, Layout } from "@ui-kitten/components";
-import { View, StyleSheet, FlatList, Pressable } from "react-native";
+import { Button, Card, Layout, Toggle } from "@ui-kitten/components";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  VirtualizedList,
+  TouchableOpacity,
+  TextInput,
+  Text,
+} from "react-native";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import { JOURNAL_ENTRY_FIXTURE_1 } from "../../fixture/entries";
 import { useSelector } from "react-redux";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
-import { selectRecentEntriesWithinRange } from "../../redux/journalEntries/journalEntriesSlice";
+import {
+  selectRecentEntriesWithinRange,
+  EntrySearchFilter,
+  selectAllJournalEntryLabels,
+} from "../../redux/journalEntries/journalEntriesSlice";
+import { useState } from "react";
+import uuid from "react-native-uuid";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
-}
-
-interface JournalTabFilter {
-  ascending: boolean;
-  upperDateBound: number;
-  lowerDateBound: number;
-  searchTerm: string;
-  displayedEntryType: string; // [both, journal_entries, check_ins]
 }
 
 const Header = ({ title, date, emotion, ...props }) => (
@@ -41,7 +48,7 @@ const Footer = (props) => (
 );
 
 const JournalEntryCardLong = ({ entry }) => {
-  console.log(entry)
+  console.log(entry);
   let content = entry.content;
   return (
     <View style={styles.cardContainer}>
@@ -77,7 +84,7 @@ export const CheckInCard = ({ checkIn, ...props }) => {
           paddingHorizontal: 24,
         }}
       >
-        <View style={{alignSelf: "center"}}>
+        <View style={{ alignSelf: "center" }}>
           <Text category="s1">{dayjs.unix(date).toString()}</Text>
         </View>
         <View>
@@ -94,9 +101,81 @@ export const CheckInCard = ({ checkIn, ...props }) => {
   );
 };
 
+const SearchBar = ({ searchTerm, setSearchTerm }) => {
+  return (
+    <View>
+      <TextInput
+        value={searchTerm}
+        onChangeText={(text) => setSearchTerm(text)}
+      ></TextInput>
+    </View>
+  );
+};
+export function LabelSearchDropdownMenu() {
+  const labels: String[] = useSelector(selectAllJournalEntryLabels);
+  const [labelSearchTerm, setLabelSearchTerm] = useState("");
+  let possibleLabelsToPick = labels
+    .filter((label) =>
+      label.toLowerCase().includes(labelSearchTerm.toLowerCase())
+    )
+    .map((label) => ({ id: uuid.v4().toString(), item: label }));
+  console.log(possibleLabelsToPick);
+
+  const renderOption = ({ item }) => {
+    <View style={{  }}>
+      <Text>{item}</Text>
+    </View>;
+  };
+
+  return (
+    <View
+      style={{
+        height: 200,
+        backgroundColor: "blue",
+        width: 500,
+        position: "absolute",
+        bottom: 0,
+      }}
+    >
+      {/* <SearchBar
+        searchTerm={labelSearchTerm}
+        setSearchTerm={setLabelSearchTerm}
+      /> */}
+      <FlatList
+        data={possibleLabelsToPick}
+        renderItem={renderOption}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
+  );
+}
+
+function DateRangePicker() {}
+
+function EntrySearchBar() {}
+
+export function FilterBar() {
+  let [filters, setFilters] = useState({
+    ascending: false,
+    labels: [],
+    dateRange: [0, dayjs().unix()],
+    searchTerm: "",
+  });
+  return (
+    <View>
+      <Button>{ascending ? "ASC" : "DESC"}</Button>
+      <LabelSearchDropdownMenu />
+      <DateRangePicker />
+      <EntrySearchBar />
+    </View>
+  );
+}
+
 export default function Journal({ navigation }: Props) {
-  const entries = useSelector(state => selectRecentEntriesWithinRange(state, 100));
-  entries.reverse()
+  const entries = useSelector((state) =>
+    selectRecentEntriesWithinRange(state, 100)
+  );
+  entries.reverse();
   console.log(entries);
   return (
     <View style={styles.screen}>
@@ -105,16 +184,14 @@ export default function Journal({ navigation }: Props) {
         {/* <FilterBar /> */}
         <FlatList
           data={entries}
-          renderItem={(entry) => 
-              <JournalEntryCardLong key={entry.item.id} entry={entry.item}></JournalEntryCardLong>
-            
-          }
-          keyExtractor={(entry) => entry.id}
-          ListFooterComponent={() => (
-            <View
-              style={{height: 200}}
-            ></View>
+          renderItem={(entry) => (
+            <JournalEntryCardLong
+              key={entry.item.id}
+              entry={entry.item}
+            ></JournalEntryCardLong>
           )}
+          keyExtractor={(entry) => entry.id}
+          ListFooterComponent={() => <View style={{ height: 200 }}></View>}
         />
       </View>
     </View>
@@ -148,7 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     width: "98%",
     margin: 2,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   footerContainer: {
     flexDirection: "row",

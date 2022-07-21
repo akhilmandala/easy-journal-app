@@ -23,6 +23,7 @@ export interface JournalEntry {
 const initialState = {
   entries: DEMO_ENTRIES,
   entryOrder: DEMO_LATEST_ENTRY_IDS,
+  labels: ["important", "goal"],
 };
 
 export const journalEntriesSlice = createSlice({
@@ -36,6 +37,7 @@ export const journalEntriesSlice = createSlice({
       }>
     ) {
       let { entry } = action.payload;
+      let newLabels = entry.labels.filter(label => !state.labels.includes(label))
       return {
         ...state,
         entries: {
@@ -43,6 +45,7 @@ export const journalEntriesSlice = createSlice({
           [entry.id]: entry,
         },
         entryOrder: [...state.entryOrder, { id: entry.id, date: entry.date }],
+        labels: [...state.labels, ...newLabels]
       };
     },
     removeEntry(
@@ -87,12 +90,13 @@ export const selectJournalEntriesState = (state) => state.journalEntries;
 export const selectJournalEntries = (state) => state.journalEntries.entries;
 export const selectJournalEntryOrder = (state) =>
   state.journalEntries.entryOrder;
+export const selectAllJournalEntryLabels = (state) => state.journalEntries.labels
 
 export const selectRecentEntriesWithinRange = createSelector(
   [selectJournalEntryOrder, selectJournalEntries, (state, range) => range],
   (entryOrder: [], entries: {}, range) => {
     if (entryOrder.length > range) {
-      entryOrder = entryOrder.slice(entryOrder.length - range)
+      entryOrder = entryOrder.slice(entryOrder.length - range);
     }
     let sortedEntries = entryOrder.map(({ id }) => entries[id]);
     return sortedEntries;
@@ -102,13 +106,13 @@ export const selectRecentEntriesWithinRange = createSelector(
 export const selectMostRecentJournalEntry = createSelector(
   [selectJournalEntryOrder, selectJournalEntries],
   (entryOrder: [], entries: {}) => {
-    console.log(entries)
-    console.log(entryOrder)
+    console.log(entries);
+    console.log(entryOrder);
     return entries[entryOrder[entryOrder.length - 1].id];
   }
 );
 
-interface EntrySearchFilter {
+export interface EntrySearchFilter {
   ascending: boolean;
   labels: string[];
   dateRange: [number, number];
@@ -117,9 +121,13 @@ interface EntrySearchFilter {
 
 const hasLabel = (entry: JournalEntry, labels: string[]) =>
   entry.labels.some((label) => labels.includes(label));
-const hasSearchTerm = (entry: JournalEntry, searchTerm: string) =>
-  entry.title.toLowerCase().includes(searchTerm) ||
-  entry.content.toLowerCase().includes(searchTerm);
+const hasSearchTerm = (entry: JournalEntry, searchTerm: string) => {
+  searchTerm = searchTerm.toLowerCase();
+  return searchTerm !== ""
+    ? entry.title.toLowerCase().includes(searchTerm) ||
+        entry.content.toLowerCase().includes(searchTerm)
+    : entry;
+};
 const withinDateRange = (entry: JournalEntry, dateRange: Number[]) => {
   /**
    * [0, X] means all entries up till X
@@ -165,14 +173,5 @@ export const selectEntriesWithFilter = createSelector(
     return sortedFilteredEntries;
   }
 );
-
-export const searchEntries = (entries: JournalEntry[], searchTerm: string) => {
-  searchTerm = searchTerm.toLocaleLowerCase();
-  return entries.filter(
-    ({ title, content }) =>
-      title.toLowerCase().includes(searchTerm) ||
-      content.toLowerCase().includes(searchTerm)
-  );
-};
 
 export const { addEntry, removeEntry, editEntry } = journalEntriesSlice.actions;

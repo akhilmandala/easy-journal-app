@@ -8,11 +8,17 @@ import * as dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import advanced from "dayjs/plugin/advancedFormat";
-import { removeEntry, selectRecentEntriesWithinRange } from "../../redux/journalEntries/journalEntriesSlice";
+import {
+  removeEntry,
+  selectRecentEntriesWithinRange,
+} from "../../redux/journalEntries/journalEntriesSlice";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
 import { NewCheckInFormScreen } from "../CheckIn";
 import { CheckInWidgetComponent } from "../CheckIn";
+import { LabelSearchDropdownMenu } from "../Journal";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
@@ -118,13 +124,15 @@ const JournalEntryCardShort = ({ entry }) => {
 };
 
 export default function Home({ navigation }: Props) {
-  let entries = useSelector(state => selectRecentEntriesWithinRange(state, 3));
-  entries = entries.reverse()
+  let entries = [].concat(useSelector((state) =>
+    selectRecentEntriesWithinRange(state, 3)
+  )).reverse();
+
 
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <FlatList
           style={{
             height: 400,
@@ -136,52 +144,54 @@ export default function Home({ navigation }: Props) {
           fadingEdgeLength={100}
           ListHeaderComponent={() => {
             return (
-              <View style={{alignSelf: "center", width: "100%", justifyContent: "center"}}>
+              <View
+                style={{
+                  alignSelf: "center",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+              >
                 <CheckInWidgetComponent />
                 <NewEntryWidget />
               </View>
             );
           }}
-          ListFooterComponent={() => (
-            <View
-              style={{height: 200}}
-            ></View>
-          )}
+          ListFooterComponent={() => <View style={{ height: 200 }}></View>}
         />
-      </View>
+       <LabelSearchDropdownMenu />
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
-    width: "100%"
+    width: "100%",
   },
   container: {
+    height: "100%",
     width: "100%",
-    flex: 10,
     alignItems: "center",
     flexDirection: "column",
-    paddingTop: -5,
-    alignSelf: "center"
+    paddingTop: 72,
+    alignSelf: "center",
   },
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   cardContainer: {
-    width: "100%"
+    width: "100%",
   },
   cardShort: {
     borderRadius: 35,
     width: "95%",
     margin: 2,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   footerContainer: {
     flexDirection: "row",
