@@ -1,6 +1,7 @@
 import {
 	View,
 	Pressable,
+    Button,
 } from "react-native";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -12,17 +13,13 @@ import { Modal } from "@ui-kitten/components";
 import { AntDesign as Icon } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export function DateRangePicker() {
+export function DateRangePicker({filter, setFilter}) {
 	let { date: earliestEntryDate } = useSelector(selectEarliestEntry);
-	console.log(earliestEntryDate);
 	let [datePickerMenuVisible, setDatePickerMenuVisible] = useState(false);
 	let [{ bottomDateBound, topDateBound }, setDateBounds] = useState({
 		bottomDateBound: dayjs.unix(earliestEntryDate).toDate(),
 		topDateBound: dayjs().toDate(),
 	});
-
-	console.log(bottomDateBound);
-	console.log(topDateBound);
 
 	return (
 		<View>
@@ -54,6 +51,7 @@ export function DateRangePicker() {
 								bottomDateBound,
 								topDateBound: date ? date : dayjs().toDate(),
 							});
+                            setFilter({...filter, dateRange: [filter.dateRange[0], dayjs(topDateBound).unix()]})
 						}}
 						display="default"
 						style={{ width: 200 }}
@@ -67,11 +65,13 @@ export function DateRangePicker() {
 								topDateBound,
 								bottomDateBound: date ? date : dayjs().toDate(),
 							});
+                            setFilter({...filter, dateRange: [dayjs(bottomDateBound).unix(), filter.dateRange[1]]})
 						}}
 						display="default"
 						style={{ width: 200 }}
 					/>
 				</View>
+                <Button title="Submit" onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}></Button>
 			</Modal>
 			<Pressable
 				onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}

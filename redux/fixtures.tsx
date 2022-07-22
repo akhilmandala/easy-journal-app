@@ -51,7 +51,7 @@ export const DEFAULT_CHECK_INS = {
       content:
         "Ready to start writing! I'm gonna try to do this often, consistency is key to making it work",
       emotion: "1F973",
-      date: 1657231192,
+      date: 1657111192,
       order: 1,
       labels: ["important", "goal"]
     },

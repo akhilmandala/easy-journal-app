@@ -21,22 +21,31 @@ import {
   EntrySearchFilter,
   selectAllJournalEntryLabels,
 } from "../../redux/journalEntries/journalEntriesSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { JournalEntryCardLong } from "../Home";
 import { FilterBar } from "./FilterBar/FilterBar";
+import { selectEntriesWithFilter } from "../../redux/journalEntries/journalEntriesSlice";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;
 }
 
 export default function Journal({ navigation }: Props) {
-  const entries = useSelector((state) =>
-    selectRecentEntriesWithinRange(state, 100)
-  );
-  entries.reverse();
-  console.log(entries);
+  let [filters, setFilters] = useState({
+		ascending: false,
+		labels: [],
+		dateRange: [0, dayjs().unix()],
+		searchTerm: "",
+	});
+	const matchedEntries = useSelector(state => selectEntriesWithFilter(state, filters))
+  const [shownEntries, setShownEntries] = useState(matchedEntries)
+
+  useEffect(() => {
+    setShownEntries(matchedEntries)
+  }, [filters])
+
   return (
     <View style={styles.screen}>
       <RecentCheckInsToolBar />
@@ -45,11 +54,11 @@ export default function Journal({ navigation }: Props) {
           paddingTop: 72,
         }}
       >
-        <FilterBar />
+        <FilterBar  filters={filters} setFilters={setFilters} setShownEntries={setShownEntries} />
         <View style={styles.container}>
           {/* <FilterBar /> */}
           <FlatList
-            data={entries}
+            data={shownEntries}
             renderItem={(entry) => (
               <JournalEntryCardLong
                 key={entry.item.id}

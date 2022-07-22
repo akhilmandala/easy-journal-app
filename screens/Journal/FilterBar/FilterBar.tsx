@@ -7,14 +7,9 @@ import { useState } from "react";
 import { AntDesign as Icon } from "@expo/vector-icons";
 import {LabelSearchDropdownMenu} from "./LabelSearchModal"
 import {DateRangePicker} from "./DateRangePickerModal"
+import { useSelector } from "react-redux";
 
-export function FilterBar() {
-	let [filters, setFilters] = useState({
-		ascending: false,
-		labels: [],
-		dateRange: [0, dayjs().unix()],
-		searchTerm: "",
-	});
+export function FilterBar({filters, setFilters}) {
 	return (
 		<View
 			style={{
@@ -35,8 +30,8 @@ export function FilterBar() {
 					<Icon name="caretdown" size={25}></Icon>
 				)}
 			</Pressable>
-			<LabelSearchDropdownMenu />
-			<DateRangePicker />
+			<LabelSearchDropdownMenu filter={filters} setFilter={setFilters} />
+			<DateRangePicker filter={filters} setFilter={setFilters} />
 		</View>
 	);
 }

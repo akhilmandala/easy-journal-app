@@ -16,7 +16,7 @@ import { useState } from "react";
 import { Modal } from "@ui-kitten/components";
 import { AntDesign as Icon } from "@expo/vector-icons";
 
-export function LabelSearchDropdownMenu() {
+export function LabelSearchDropdownMenu( {filter, setFilter} ) {
 	const labels: String[] = useSelector(selectAllJournalEntryLabels);
 	const [labelSearchTerm, setLabelSearchTerm] = useState("");
 	let [chosenLabels, setChosenLabels] = useState([]);
@@ -126,7 +126,10 @@ export function LabelSearchDropdownMenu() {
 						keyExtractor={(item) => item.id}
 					/>
 					<Button
-						onPress={() => setLabelMenuVisible(!labelMenuVisible)}
+						onPress={() =>{ 
+                            setLabelMenuVisible(!labelMenuVisible)
+                            setFilter({...filter, labels: chosenLabels})
+                        }}
 						title={"APPLY"}
 					></Button>
 				</View>
