@@ -25,7 +25,7 @@ import { useState } from "react";
 import uuid from "react-native-uuid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { JournalEntryCardLong } from "../Home";
-import { FilterBar } from "./FilterBar";
+import { FilterBar } from "./FilterBar/FilterBar";
 
 interface Props {
   navigation: StackNavigationProp<SettingsParamList>;

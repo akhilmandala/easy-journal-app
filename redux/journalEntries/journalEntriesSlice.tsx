@@ -103,6 +103,12 @@ export const selectRecentEntriesWithinRange = createSelector(
   }
 );
 
+export const selectEarliestEntry = createSelector([selectJournalEntryOrder, selectJournalEntries], (entryOrder, entries) => {
+  if (entryOrder.length > 0) {
+    return entries[entryOrder[0].id]
+  }
+})
+
 export const selectMostRecentJournalEntry = createSelector(
   [selectJournalEntryOrder, selectJournalEntries],
   (entryOrder: [], entries: {}) => {

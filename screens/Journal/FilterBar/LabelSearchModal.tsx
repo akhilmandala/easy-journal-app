@@ -5,16 +5,14 @@ import {
 	TouchableOpacity,
 	TextInput,
 	Text,
-	Switch,
-	TouchableWithoutFeedback,
-	Keyboard,
 	Button,
 } from "react-native";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
-import { selectAllJournalEntryLabels } from "../../redux/journalEntries/journalEntriesSlice";
+import {
+	selectAllJournalEntryLabels,
+} from "../../../redux/journalEntries/journalEntriesSlice";
 import { useState } from "react";
-import uuid from "react-native-uuid";
 import { Modal } from "@ui-kitten/components";
 import { AntDesign as Icon } from "@expo/vector-icons";
 
@@ -48,7 +46,7 @@ export function LabelSearchDropdownMenu() {
 		return (
 			<TouchableOpacity
 				style={{
-          width: "100%",
+					width: "100%",
 					alignItems: "center",
 					backgroundColor: "#DDDDDD",
 					padding: 10,
@@ -72,9 +70,11 @@ export function LabelSearchDropdownMenu() {
 	}
 
 	return (
-		<View style={{
-      alignSelf: "center"
-    }}>
+		<View
+			style={{
+				alignSelf: "center",
+			}}
+		>
 			<Modal
 				visible={labelMenuVisible}
 				style={{
@@ -85,7 +85,7 @@ export function LabelSearchDropdownMenu() {
 			>
 				<View
 					style={{
-            padding: 10,
+						padding: 10,
 						height: "100%",
 						width: "100%",
 						justifyContent: "center",
@@ -120,60 +120,20 @@ export function LabelSearchDropdownMenu() {
 						></TextInput>
 					</View>
 					<FlatList
-            style={{width: "100%"}}
+						style={{ width: "100%" }}
 						data={possibleLabelsToPick}
 						renderItem={renderItem}
 						keyExtractor={(item) => item.id}
 					/>
-				<Button
-					onPress={() => setLabelMenuVisible(!labelMenuVisible)}
-					title={"APPLY"}
-				></Button>
+					<Button
+						onPress={() => setLabelMenuVisible(!labelMenuVisible)}
+						title={"APPLY"}
+					></Button>
 				</View>
 			</Modal>
 			<Pressable onPress={() => setLabelMenuVisible(!labelMenuVisible)}>
 				<Icon name="filter" size={25}></Icon>
 			</Pressable>
-		</View>
-	);
-}
-
-function DateRangePicker() {
-  let [datePickerMenuVisible, setDatePickerMenuVisible] = useState(false)
-
-  return (
-    <View>
-      <Modal></Modal>
-      <Pressable onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}>
-        <Icon name="clockcircle" size={25}></Icon>
-      </Pressable>
-    </View>
-  )
-}
-
-function EntrySearchBar() {}
-
-export function FilterBar() {
-	let [filters, setFilters] = useState({
-		ascending: false,
-		labels: [],
-		dateRange: [0, dayjs().unix()],
-		searchTerm: "",
-	});
-	return (
-		<View
-			style={{
-				width: "100%",
-				flexDirection: "row",
-				justifyContent: "space-evenly",
-				alignItems: "center",
-			}}
-		>
-      <Pressable onPress={() => setFilters({...filters, ascending: !filters.ascending})}>
-				{filters.ascending ? <Icon name="caretup" size={25}></Icon> : <Icon name="caretdown" size={25}></Icon>}
-			</Pressable>
-			<LabelSearchDropdownMenu />
-      <DateRangePicker />
 		</View>
 	);
 }
