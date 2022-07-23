@@ -1,13 +1,13 @@
-import EmojiCluster from "../../../data/emoji_cluster.json";
+import EmojiCluster from "../../data/emoji_cluster.json";
 import SVG_ICONS, {
   retrieveSVGAssetFromUnicode,
-} from "../../../utils/SVGImports";
+} from "../../utils/SVGImports";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, Text } from "@ui-kitten/components";
 import { Svg } from "react-native-svg";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
-import { selectCheckinsWithinRange } from "../../../redux/checkIns/checkInsSlice";
+import { selectCheckinsWithinRange } from "../../redux/checkIns/checkInsSlice";
 
 export const CheckInWidgetStatComponent = ({currentFilter}) => {
   const checkIns = useSelector(state => selectCheckinsWithinRange(state, 10));

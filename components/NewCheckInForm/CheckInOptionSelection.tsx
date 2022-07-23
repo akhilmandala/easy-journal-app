@@ -1,5 +1,5 @@
-import EmojiCluster from "../../../data/emoji_cluster.json";
-import SVG_ICONS, { retrieveSVGAssetFromUnicode } from "../../../utils/SVGImports";
+import EmojiCluster from "../../data/emoji_cluster.json";
+import SVG_ICONS, { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import React, { useState } from "react";
 import { View, Pressable } from "react-native";
 import { Svg } from "react-native-svg";

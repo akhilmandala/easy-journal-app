@@ -1,11 +1,3 @@
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-  SlideInUp,
-  SlideOutUp,
-} from "react-native-reanimated";
 import { useState } from "react";
 import { View, Button, Pressable, ScrollView, StyleSheet } from "react-native";
 import { IndexPath, Text, Select, SelectItem } from "@ui-kitten/components";

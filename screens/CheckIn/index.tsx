@@ -1,2 +1,2 @@
-export { CheckInWidgetComponent } from "./CheckInWidget/CheckInWidgetComponent";
-export { NewCheckInFormScreen } from "./NewCheckInForm/NewCheckInEntryForm";
+export { CheckInWidgetComponent } from "../../components/CheckInWidget/CheckInWidgetComponent";
+export { NewCheckInFormScreen } from "../../components/NewCheckInForm/NewCheckInEntryForm";

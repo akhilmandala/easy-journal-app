@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-const App = ({
+const Stat = ({
   onMessage = (d) => console.log(d.imgs),
   editable = true,
   initDelta = exampleDelta,

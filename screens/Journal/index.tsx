@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { JournalEntryCardLong } from "../Home";
-import { FilterBar } from "./FilterBar/FilterBar";
+import { FilterBar } from "../../components/FilterBar/FilterBar";
 import { selectEntriesWithFilter } from "../../redux/journalEntries/journalEntriesSlice";
 
 interface Props {

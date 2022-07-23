@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Text } from "@ui-kitten/components";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
-import { addCheckIn, CheckIn, selectLatestCheckIn } from "../../../redux/checkIns/checkInsSlice";
+import { addCheckIn, CheckIn, selectLatestCheckIn } from "../../redux/checkIns/checkInsSlice";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { Formik } from "formik";

@@ -7,13 +7,13 @@ import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import {
 	selectEarliestEntry,
-} from "../../../redux/journalEntries/journalEntriesSlice";
+} from "../../redux/journalEntries/journalEntriesSlice";
 import { useState } from "react";
 import { Modal } from "@ui-kitten/components";
 import { AntDesign as Icon } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export function DateRangePicker({filter, setFilter}) {
+export function DateRangePicker({filter, setFilter, iconSize}) {
 	let { date: earliestEntryDate } = useSelector(selectEarliestEntry);
 	let [datePickerMenuVisible, setDatePickerMenuVisible] = useState(false);
 	let [{ bottomDateBound, topDateBound }, setDateBounds] = useState({
@@ -76,7 +76,7 @@ export function DateRangePicker({filter, setFilter}) {
 			<Pressable
 				onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}
 			>
-				<Icon name="clockcircle" size={25}></Icon>
+				<Icon name="clockcircleo" size={iconSize ? iconSize : 25}></Icon>
 			</Pressable>
 		</View>
 	);
