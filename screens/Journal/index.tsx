@@ -24,7 +24,7 @@ import {
 import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { JournalEntryCardLong } from "../Home";
+import { JournalEntryCardShort } from "../../components/JournalEntryCard/JournalEntryCard";
 import { FilterBar } from "../../components/FilterBar/FilterBar";
 import { selectEntriesWithFilter } from "../../redux/journalEntries/journalEntriesSlice";
 
@@ -60,10 +60,10 @@ export default function Journal({ navigation }: Props) {
           <FlatList
             data={shownEntries}
             renderItem={(entry) => (
-              <JournalEntryCardLong
+              <JournalEntryCardShort
                 key={entry.item.id}
-                entry={entry.item}
-              ></JournalEntryCardLong>
+                entry={entry}
+              ></JournalEntryCardShort>
             )}
             keyExtractor={(entry) => entry.id}
             ListFooterComponent={() => <View style={{ height: 200 }}></View>}
@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
-    backgroundColor: "rgb(255, 255, 255)",
   },
   container: {
     width: "100%",
