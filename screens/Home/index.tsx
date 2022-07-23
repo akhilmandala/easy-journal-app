@@ -3,7 +3,7 @@ import { View, StyleSheet, Animated } from "react-native";
 import RecentCheckInsToolBar from "../../components/RecentCheckInsBar";
 import { connect, useSelector } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
-import { NewEntryWidget } from "../Journal/NewEntryWidget";
+import { NewEntryWidget } from "../Journal/NewEntryForm/NewEntryWidget";
 import * as dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";

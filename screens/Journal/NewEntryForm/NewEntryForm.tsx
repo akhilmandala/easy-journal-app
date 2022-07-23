@@ -15,15 +15,16 @@ import {
   Text,
   Input,
 } from "@ui-kitten/components";
-import { addEntry, JournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
+import { addEntry, JournalEntry } from "../../../redux/journalEntries/journalEntriesSlice";
 import { Svg } from "react-native-svg";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { Formik, connect, getIn } from "formik";
 import { useSelector, connect as connectRedux } from "react-redux";
-import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
+import { retrieveSVGAssetFromUnicode } from "../../../utils/SVGImports";
 import { AntDesign as Icon } from "@expo/vector-icons";
-import { selectMostRecentJournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
+import { selectMostRecentJournalEntry } from "../../../redux/journalEntries/journalEntriesSlice";
+import { LabelSearchDropdownMenu } from "../FilterBar/LabelSearchModal";
 
 export const EmojiPickerInputComponent = ({
   handleChange,
@@ -120,12 +121,13 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
     emotion: "",
     title: "",
     content: "",
+    labels: [],
     date: dayjs().unix(),
     order: latestEntry.order + 1,
   };
 
   const [draft, setDraft] = React.useState<JournalEntry>(entryDraft);
-  const DEFAULT_INITIAL_VALUES = { emotion: "", title: "", content: "" }
+  const DEFAULT_INITIAL_VALUES = { emotion: "", title: "", content: "", labels: [] }
   return (
     <Card
       disabled={true}
@@ -153,6 +155,7 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
                 value={values.title}
               />
               <EmojiPickerInput handleChange={handleChange} />
+              <LabelSearchDropdownMenu filter={values} setFilter={({labels: newLabels}) => { values.labels = newLabels }}/>
               <Input
                 placeholder="Write whatever you need.."
                 size="large"

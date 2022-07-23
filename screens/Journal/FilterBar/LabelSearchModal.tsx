@@ -52,10 +52,7 @@ export function LabelSearchDropdownMenu( {filter, setFilter} ) {
 					padding: 10,
 				}}
 				onPress={() => {
-					console.log(chosenLabels);
-					console.log(label);
 					if (chosenLabels.includes(label.item)) {
-						console.log(label);
 						setChosenLabels(
 							chosenLabels.filter((cLabel) => cLabel.item !== label.item)
 						);
@@ -109,13 +106,16 @@ export function LabelSearchDropdownMenu( {filter, setFilter} ) {
 						}}
 					>
 						<TextInput
-							placeholder="Search label"
+							placeholder="Search label, or type your own..."
 							value={labelSearchTerm}
 							onChangeText={(text) => setLabelSearchTerm(text)}
 							style={{
 								alignSelf: "center",
 								padding: 10,
 								backgroundColor: "#ffffff",
+							}}
+							onSubmitEditing={({ nativeEvent: { text }}) => {
+								setChosenLabels([...chosenLabels, text])
 							}}
 						></TextInput>
 					</View>
