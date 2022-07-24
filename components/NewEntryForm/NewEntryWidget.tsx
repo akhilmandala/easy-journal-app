@@ -1,6 +1,6 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
+import { Pressable, StyleSheet, View, Text } from "react-native";
+import { Button, Card, Layout, Modal } from "@ui-kitten/components";
 import { NewEntryWidgetForm } from "./NewEntryForm";
 
 export const NewEntryWidget = () => {
@@ -8,19 +8,44 @@ export const NewEntryWidget = () => {
 
 	return (
 		<View style={styles.container}>
-			<Pressable onPress={() => setVisible(true)} style={{flex: 0.8}}>
-				<View style={styles.widgetButtonContainer}>
+			<Pressable
+				onPress={() => setVisible(true)}
+				style={[styles.mainAddEntryButton, { flex: 0.8, marginRight: 2 }]}
+			>
+				<View>
 					<Text>New Entry</Text>
 				</View>
 			</Pressable>
-			<View style={[styles.labelSpecificColumn, {flex: 0.2}]}>
-				<Pressable onPress={() => setVisible(true)} style={[styles.widgetLabelButtonContainer, {borderTopRightRadius: 15}]}>
+			<View style={[styles.addEntryWithLabelButtonColumn]}>
+				<Pressable
+					onPress={() => setVisible(true)}
+					style={[
+						styles.addEntryWithLabelButton,
+						{
+							borderTopRightRadius: 35,
+							marginLeft: 2,
+							marginBottom: 2,
+							backgroundColor: "#FDE2E4",
+						},
+					]}
+				>
 					<View>
 						<Text>Label 1</Text>
 					</View>
 				</Pressable>
-				<Pressable onPress={() => setVisible(true)} style={[styles.widgetLabelButtonContainer, {borderTopRightRadius: 15}]}>
-					<View >
+				<Pressable
+					onPress={() => setVisible(true)}
+					style={[
+						styles.addEntryWithLabelButton,
+						{
+							borderBottomRightRadius: 35,
+							marginLeft: 2,
+							marginTop: 2,
+							backgroundColor: "#CDDAFD",
+						},
+					]}
+				>
+					<View>
 						<Text>Label 2</Text>
 					</View>
 				</Pressable>
@@ -35,22 +60,32 @@ export const NewEntryWidget = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		height: 100,
+		height: 150,
 		marginVertical: 10,
 		width: "100%",
 		alignSelf: "center",
 		flexDirection: "row",
 	},
-	widgetLabelButtonContainer: { height: "50%", width: "100%%", backgroundColor: "#DFE7FD",  },
-	widgetButtonContainer: {
-		borderBottomLeftRadius: 15,
-    borderTopLeftRadius: 15,
+	mainAddEntryButton: {
+		borderBottomLeftRadius: 35,
+		borderTopLeftRadius: 35,
 		height: "100%",
 		width: "100%%",
 		backgroundColor: "#FAD2E1",
+		flex: 0.6,
+		alignItems: "center",
+		justifyContent: "center"
 	},
-	labelSpecificColumn: {
+	addEntryWithLabelButtonColumn: {
 		flexDirection: "column",
+		flex: 0.4,
+	},
+	addEntryWithLabelButton: {
+		height: 73,
+		width: "100%%",
+		backgroundColor: "#DFE7FD",
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	newEntryFormContainer: {
 		height: "80%",

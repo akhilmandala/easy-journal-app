@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { DefaultTheme} from "@react-navigation/native"
 import { AntDesign as Icon } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { View } from "react-native";
@@ -86,9 +87,18 @@ function MyTabBar({ state, descriptors, navigation }) {
   );
 }
 
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#322D31'
+  },
+};
+
 export const TabBar = (props) => {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <BottomTab.Navigator
         screenOptions={{
           headerShown: false,
@@ -98,6 +108,7 @@ export const TabBar = (props) => {
             "alignContent": "center",
             color: "white"
           },
+          
         }}
         // tabBar={(props) => <MyTabBar initialRouteName="Home" {...props} />}
         initialRouteName="Home"

@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
-import { Button, Modal, Text } from "@ui-kitten/components";
+import { View, StyleSheet, Pressable, Text } from "react-native";
+import { Button, Modal } from "@ui-kitten/components";
 import CheckInWidgetFilterSelector from "./CheckInWidgetFilterSelector";
 
 export const CheckInWidgetFooter = ({
   filterOptions,
   currentFilterIndex,
   setFilterIndex,
+  textStyle,
   ...props
 }) => {
   console.log(setFilterIndex)
   return (
     <View style={styles.container}>
-      <Text category="p2" style={{ fontWeight: "600", paddingRight: 5 }}>
-        FROM THE PAST
-      </Text>
       <CheckInWidgetFilterSelector
         currentOptionIndex={currentFilterIndex}
         options={filterOptions}

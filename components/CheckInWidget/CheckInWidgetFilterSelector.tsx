@@ -30,6 +30,7 @@ const CheckInWidgetFilterSelector = ({
     >
       {options.map((option) => (
         <SelectItem
+        key={option}
           title={(evaProps) => (
             <Text {...evaProps} style={styles.optionStyle}>
               {option}

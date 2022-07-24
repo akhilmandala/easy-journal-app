@@ -70,6 +70,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     alignSelf: "center",
-    paddingHorizontal: 10
+    paddingHorizontal: 20
   },
 });

@@ -64,8 +64,9 @@ const JournalEntryCardFooterComponent = ({
 			}}
 		>
 			{entryLabels &&
-				entryLabels.map((label) => (
+				entryLabels.map((label, index) => (
 					<View
+						key={label + "_" + index}
 						style={{
 							backgroundColor: "#FDE2E4",
 							padding: 3,
