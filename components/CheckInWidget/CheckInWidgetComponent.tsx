@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Card } from "@ui-kitten/components";
-import { useSharedValue } from "react-native-reanimated";
-import { CheckInWidgetFooter } from "./CheckInWidgetFooter";
-import { CheckInWidgetHeader } from "./CheckInWidgetHeader";
 import { CheckInWidgetStatComponent } from "./CheckInWidgetStatContent"
 
 export const CheckInWidgetComponent = () => {
@@ -34,8 +30,8 @@ export const CheckInWidgetComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "50%",
-    width: "100%"
+    width: "100%",
+    marginBottom: 20,
   },
   greetingTextContainer: {
     marginVertical: 10

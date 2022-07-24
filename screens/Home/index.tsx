@@ -9,6 +9,7 @@ import {
 import { CheckInWidgetComponent } from "../CheckIn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { JournalEntryCardShort } from "../../components/JournalEntryCard/JournalEntryCard";
+import { NewCheckInButton } from "../../components/NewCheckInButton/NewCheckInButton";
 
 export function HomeRedesigned({navigation}) {
   return (
@@ -45,6 +46,7 @@ export default function Home({ navigation }) {
                 }}
               >
                 <CheckInWidgetComponent />
+                <NewCheckInButton />
                 <NewEntryWidget />
               </View>
             );

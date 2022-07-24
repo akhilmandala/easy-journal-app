@@ -22,7 +22,7 @@ export const NewEntryWidget = () => {
 					style={[
 						styles.addEntryWithLabelButton,
 						{
-							borderTopRightRadius: 35,
+							borderTopRightRadius: 15,
 							marginLeft: 2,
 							marginBottom: 2,
 							backgroundColor: "#FDE2E4",
@@ -38,7 +38,7 @@ export const NewEntryWidget = () => {
 					style={[
 						styles.addEntryWithLabelButton,
 						{
-							borderBottomRightRadius: 35,
+							borderBottomRightRadius: 15,
 							marginLeft: 2,
 							marginTop: 2,
 							backgroundColor: "#CDDAFD",
@@ -67,10 +67,10 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 	},
 	mainAddEntryButton: {
-		borderBottomLeftRadius: 35,
-		borderTopLeftRadius: 35,
+		borderBottomLeftRadius: 15,
+		borderTopLeftRadius: 15,
 		height: "100%",
-		width: "100%%",
+		width: "100%",
 		backgroundColor: "#FAD2E1",
 		flex: 0.6,
 		alignItems: "center",
