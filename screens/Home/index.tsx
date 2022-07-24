@@ -10,6 +10,14 @@ import { CheckInWidgetComponent } from "../CheckIn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { JournalEntryCardShort } from "../../components/JournalEntryCard/JournalEntryCard";
 
+export function HomeRedesigned({navigation}) {
+  return (
+    <View>
+
+    </View>
+  )
+}
+
 export default function Home({ navigation }) {
   let entries = [].concat(useSelector((state) =>
     selectRecentEntriesWithinRange(state, 3)
@@ -18,11 +26,9 @@ export default function Home({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <RecentCheckInsToolBar />
       <SafeAreaView style={styles.container}>
         <FlatList
           style={{
-            height: 400,
             width: "100%",
           }}
           data={entries}
@@ -63,27 +69,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     flexDirection: "column",
-    paddingTop: 72,
     alignSelf: "center",
-  },
-  topContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  cardContainer: {
-    width: "100%",
-  },
-  cardShort: {
-    borderRadius: 35,
-    width: "95%",
-    margin: 2,
-    alignSelf: "center",
-  },
-  footerContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-  footerControl: {
-    marginHorizontal: 2,
+    paddingHorizontal: 10
   },
 });

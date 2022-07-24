@@ -23,7 +23,7 @@ export const CheckInWidgetComponent = () => {
           style={{
             borderRadius: 35,
             marginTop: 10,
-            width: '95%',
+            width: '100%',
             alignSelf: "center"
           }}
           header={CheckInWidgetHeader}

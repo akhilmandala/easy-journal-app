@@ -143,32 +143,12 @@ export const JournalEntryCardShort = ({ entry }) => {
 };
 
 const styles = StyleSheet.create({
-    screen: {
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "100%",
-      width: "100%",
-    },
-    container: {
-      height: "100%",
-      width: "100%",
-      alignItems: "center",
-      flexDirection: "column",
-      paddingTop: 72,
-      alignSelf: "center",
-    },
-    topContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
     cardContainer: {
       width: "100%",
     },
     cardShort: {
       borderRadius: 35,
-      width: "95%",
-      margin: 2,
+	  width: "100%",
       alignSelf: "center",
     },
     footerContainer: {
