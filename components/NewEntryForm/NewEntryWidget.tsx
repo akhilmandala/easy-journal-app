@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Button, Card, Layout, Modal } from "@ui-kitten/components";
 import { NewEntryWidgetForm } from "./NewEntryForm";
 import { CustomText } from "../CustomText";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const NewEntryWidget = ({ labels }) => {
 	const [visible, setVisible] = React.useState(false);
@@ -53,7 +54,9 @@ export const NewEntryWidget = ({ labels }) => {
 			</View>
 
 			<Modal visible={visible} style={styles.newEntryFormContainer}>
-				<NewEntryWidgetForm setVisible={() => setVisible(!visible)} />
+				<SafeAreaView>
+					<NewEntryWidgetForm setVisible={() => setVisible(!visible)} />
+				</SafeAreaView>
 			</Modal>
 		</View>
 	);
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#FAD2E1",
 		flex: 0.6,
 		alignItems: "center",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	addEntryWithLabelButtonColumn: {
 		flexDirection: "column",
@@ -86,13 +89,14 @@ const styles = StyleSheet.create({
 		width: "100%%",
 		backgroundColor: "#DFE7FD",
 		alignItems: "center",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	newEntryFormContainer: {
-		height: "80%",
-		width: "80%",
+		height: "100%",
+		width: "100%",
+		backgroundColor: "#FAD2E1",
 	},
 	text: {
-		color: "black"
-	}
+		color: "black",
+	},
 });

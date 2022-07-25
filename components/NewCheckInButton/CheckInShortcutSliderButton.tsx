@@ -18,7 +18,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 
-const ICON_SIZE = 20;
 
 const clamp = (value: number, min: number, max: number) => {
 	"worklet";
@@ -31,7 +30,6 @@ export const SlidingCounter = ({options, onSelect}) => {
 	const translateY = useSharedValue(0);
 
 	const [count, setCount] = useState(0);
-  console.log(count)
 	const MAX_SLIDE_OFFSET = 150 * 0.3;
 
 	// wrapper function
