@@ -7,6 +7,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { Svg } from "react-native-svg";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
 import { isNegativeCheckIn, isNeutralCheckin, isPositiveCheckIn, selectCheckinsWithinRange } from "../../redux/checkIns/checkInsSlice";
+import { CustomText } from "../CustomText";
 
 export const CheckInWidgetStatComponent = ({currentFilter, textStyle}) => {
   const checkIns = useSelector(state => selectCheckinsWithinRange(state, 10));
@@ -17,11 +18,11 @@ export const CheckInWidgetStatComponent = ({currentFilter, textStyle}) => {
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: "center" }}>
-        <Text style={[textStyle]}>You've checked in </Text>
-        <Text style={[textStyle, { fontWeight: "400", fontSize: 36 }]}>
+        <CustomText >You've checked in </CustomText>
+        <CustomText style={[ { fontWeight: "400", fontSize: 36 }]}>
           {checkIns.length} times
-        </Text>
-        <Text style={[textStyle]}>over the past {currentFilter.toLowerCase()}</Text>
+        </CustomText>
+        <CustomText style={[textStyle]}>over the past {currentFilter.toLowerCase()}</CustomText>
       </View>
       <View style={styles.checkInEmotionBreakdownContainer}>
         {[

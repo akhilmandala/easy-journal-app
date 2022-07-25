@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { CheckInWidgetStatComponent } from "./CheckInWidgetStatContent"
+import { CustomText } from "../CustomText";
 
 export const CheckInWidgetComponent = () => {
   let [currentFilterIndex, setCurrentFilterIndex] = useState(0)
@@ -18,8 +19,8 @@ export const CheckInWidgetComponent = () => {
   return (
     <View style={[styles.container]}>
       <View style={[styles.greetingTextContainer]}>
-        <Text style={[styles.text, {fontSize: 48}]}>Good morning, </Text>
-        <Text style={[styles.text, {fontSize: 48}]}>user.</Text>
+        <CustomText style={[ {fontSize: 48}]}>Good morning, </CustomText>
+        <CustomText style={[ {fontSize: 48}]}>user.</CustomText>
       </View>
       <CheckInWidgetStatComponent currentFilter={filterOptions[currentFilterIndex]} textStyle={styles.text} />
       {/** WIP: Redo footer to be date range selector using sliders */}
@@ -39,5 +40,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     color: "white",
+    fontFamily: "Apple SD Gothic Neo"
   }
 })

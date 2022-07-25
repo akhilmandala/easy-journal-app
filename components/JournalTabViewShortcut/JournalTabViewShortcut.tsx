@@ -4,6 +4,7 @@ import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
 import { useSelector } from "react-redux";
 import { selectEntriesWithFilter } from "../../redux/journalEntries/journalEntriesSlice";
+import { CustomText } from "../CustomText";
 
 export const JournalTabViewShortcut = ({ label }) => {
 	const [visible, setVisible] = React.useState(false);
@@ -26,7 +27,7 @@ export const JournalTabViewShortcut = ({ label }) => {
 		<View style={styles.container}>
 			<Pressable style={[styles.mainButton]}>
 				<View>
-					<Text style={styles.text}>{label}: {entriesWithLabel.length} {entriesWithLabel.length > 1 ?  "entries" : "entry"} </Text>
+					<CustomText style={styles.text}>{label}: {entriesWithLabel.length} {entriesWithLabel.length > 1 ?  "entries" : "entry"} </CustomText>
 				</View>
 			</Pressable>
 		</View>
@@ -49,7 +50,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     text: {
-        fontSize: 16,
         color: "black"
     }
 });

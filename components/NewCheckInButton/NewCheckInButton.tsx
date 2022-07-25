@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
 import { Svg } from "react-native-svg";
+import {
+	useSharedValue,
+	useAnimatedGestureHandler,
+	withSpring,
+	useAnimatedStyle,
+} from "react-native-reanimated";
+import { PanGestureHandler } from "react-native-gesture-handler";
+import { CustomText } from "../CustomText";
 
 export const NewCheckInButton = () => {
 	const [visible, setVisible] = React.useState(false);
@@ -13,32 +21,57 @@ export const NewCheckInButton = () => {
 	console.log(shortcutEmojis);
 	let checkInShortcutColors = ["#f6bd60", "#9f86c0", "#f28482"];
 
+	const translateY = useSharedValue(0);
+	const gestureHandler = useAnimatedGestureHandler({
+		onStart: (event, context) => {
+			context.startY = translateY.value;
+		},
+		onActive: (event, context) => {
+			translateY.value = context.startY + event.translationY;
+		},
+		onEnd: (event) => {
+			translateY.value = withSpring(0, {
+				velocity: event.velocityY,
+			});
+		},
+	});
+
+	const animatedStyle = useAnimatedStyle(() => {
+		return {
+			transform: [{ translateY: translateY.value }],
+		};
+	});
+
 	return (
 		<View style={styles.container}>
 			<Pressable style={[styles.mainNewCheckInButton]}>
-				<View>
-					<Text>New Check In</Text>
-				</View>
+				<CustomText style={{ color: "black" }}>New Check In</CustomText>
 			</Pressable>
 			<View style={[styles.addSpecificCheckInSection]}>
 				{shortcutEmojis.map((emoji, index) => (
-					<View
-					>
-						<Pressable style={[styles.checkInEmojiShortcutButton, {
-							backgroundColor: checkInShortcutColors[index],
-                            height: "100%"
-						}]}>
-							<View>
-								<Svg
-									height={"40px"}
-									width={"40px"}
-									preserveAspectRatio="xMinYMin slice"
-								>
-									{retrieveSVGAssetFromUnicode(emoji)}
-								</Svg>
-							</View>
-						</Pressable>
-					</View>
+					<PanGestureHandler onGestureEvent={gestureHandler}>
+						<View>
+							<Pressable
+								style={[
+									styles.checkInEmojiShortcutButton,
+									{
+										backgroundColor: checkInShortcutColors[index],
+										height: "100%",
+									},
+								]}
+							>
+								<View>
+									<Svg
+										height={"40px"}
+										width={"40px"}
+										preserveAspectRatio="xMinYMin slice"
+									>
+										{retrieveSVGAssetFromUnicode(emoji)}
+									</Svg>
+								</View>
+							</Pressable>
+						</View>
+					</PanGestureHandler>
 				))}
 			</View>
 		</View>

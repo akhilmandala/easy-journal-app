@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Button, Card, Layout, Modal } from "@ui-kitten/components";
 import { NewEntryWidgetForm } from "./NewEntryForm";
+import { CustomText } from "../CustomText";
 
 export const NewEntryWidget = ({ labels }) => {
 	const [visible, setVisible] = React.useState(false);
@@ -13,7 +14,7 @@ export const NewEntryWidget = ({ labels }) => {
 				style={[styles.mainAddEntryButton, { flex: 0.8, marginRight: 2 }]}
 			>
 				<View>
-					<Text>New Entry</Text>
+					<CustomText style={[styles.text]}>New Entry</CustomText>
 				</View>
 			</Pressable>
 			<View style={[styles.addEntryWithLabelButtonColumn]}>
@@ -30,7 +31,7 @@ export const NewEntryWidget = ({ labels }) => {
 					]}
 				>
 					<View>
-						<Text>{labels[0]}</Text>
+						<CustomText style={[styles.text]}>{labels[0]}</CustomText>
 					</View>
 				</Pressable>
 				<Pressable
@@ -46,7 +47,7 @@ export const NewEntryWidget = ({ labels }) => {
 					]}
 				>
 					<View>
-						<Text>{labels[1]}</Text>
+						<CustomText style={[styles.text]}>{labels[1]}</CustomText>
 					</View>
 				</Pressable>
 			</View>
@@ -91,4 +92,7 @@ const styles = StyleSheet.create({
 		height: "80%",
 		width: "80%",
 	},
+	text: {
+		color: "black"
+	}
 });
