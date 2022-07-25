@@ -1,114 +1,125 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	StyleSheet,
 	View,
 	KeyboardAvoidingView,
-	Pressable,
 	ScrollView,
 	Platform,
+	Keyboard,
+	TextInput,
+	Dimensions,
+	Pressable,
 } from "react-native";
-import {
-	Button,
-	Card,
-	Layout,
-	Modal,
-	Text,
-	Input,
-} from "@ui-kitten/components";
+import { Button, Card, Input } from "@ui-kitten/components";
 import {
 	addEntry,
 	JournalEntry,
 } from "../../redux/journalEntries/journalEntriesSlice";
-import { Svg } from "react-native-svg";
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
-import { Formik, connect, getIn } from "formik";
+import { Formik, connect } from "formik";
 import { useSelector, connect as connectRedux } from "react-redux";
-import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
-import { AntDesign as Icon } from "@expo/vector-icons";
 import { selectMostRecentJournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
 import { LabelSearchDropdownMenu } from "../FilterBar/LabelSearchModal";
+import {
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
+import { TabBarIcon } from "../../navigation";
+import { CustomText } from "../CustomText";
+import { EmojiPickerInputComponent } from "./EmojiLinePicker";
 
-export const EmojiPickerInputComponent = ({
-	handleChange,
-	handleBlur,
-	values,
-	...props
-}) => {
-	const DEFAULT_CHOICES = [
-		{ emoji: "1F973" },
-		{ emoji: "1F929" },
-		{ emoji: "1F970" },
-		{ emoji: "1F976" },
-		{ emoji: "1F623" },
-		{ emoji: "1F610" },
-	];
+const styles = StyleSheet.create({
+	container: {
+		minHeight: "5%",
+		paddingTop: 10,
+	},
+	widgetButtonContainer: {
+		borderRadius: 15,
+	},
+	formContainer: {
+		padding: 0,
+		alignSelf: "flex-start",
+	},
+	entryText: {
+		fontSize: 16,
+		fontFamily: "Apple SD Gothic Neo",
+	},
+	entryInput: {
+		height: "100%",
+	},
+	largeText: {
+		fontSize: 24,
+		fontWeight: "400",
+		fontFamily: "Apple SD Gothic Neo",
+	},
+	titleInput: {
+		fontStyle: "italic",
+	},
+});
 
-	let [emotionChoice, setEmotionChoice] = useState("");
-	let [emotionChoices, setEmotionChoices] = useState(DEFAULT_CHOICES);
-	let emotionChoicesSVGs = emotionChoices.map((emotion) =>
-		retrieveSVGAssetFromUnicode(emotion.emoji)
-	);
+const PLACEHOLDER_TEXT =
+	"................................................................................................\n\n\n\n\n\n..........................................................................................\n\n\n\n\n\n.............................................................................................!";
 
-	let handleEmotionClick = ({ emoji }) => {
-		if (emotionChoice == emoji) {
-			setEmotionChoice("");
-			props.formik.setFieldValue("emotion", "");
-		} else {
-			setEmotionChoice(emoji);
-			props.formik.setFieldValue("emotion", emoji);
-		}
-	};
-
-	let handleEmotionChoiceShuffle = () => {
-		if (emotionChoice !== "") {
-			// shuffle entire set
-		} else {
-			// shuffle rest of set from picked emoji group
-		}
-	};
-
+export const NewEntryFormRedesigned = ({ setVisible }) => {
+	console.log(Dimensions.get("window"));
 	return (
-		<View
-			style={{
-				flexDirection: "row",
-				justifyContent: "center",
-				paddingVertical: 10,
+		<TouchableWithoutFeedback
+			onPress={() => {
+				Keyboard.dismiss();
 			}}
 		>
-			{emotionChoicesSVGs.map((choice, index) => {
-				let { emoji } = emotionChoices[index];
-
-				return (
-					<Pressable
-						onPress={() => handleEmotionClick(emotionChoices[index])}
-						key={index}
-					>
-						<View
-							style={{
-								borderBottomWidth: emotionChoice == emoji ? 3 : 0,
-								borderColor: "rgb(60,105,246)",
-								paddingBottom: emotionChoice == emoji ? 0 : 3,
-							}}
-						>
-							<Svg
-								height={"40px"}
-								width={"40px"}
-								preserveAspectRatio="xMinYMin slice"
-							>
-								{choice}
-							</Svg>
-						</View>
-					</Pressable>
-				);
-			})}
-			<Pressable
-				onPress={() => handleEmotionChoiceShuffle()}
-				style={{ alignSelf: "center" }}
+			<View
+				style={[
+					StyleSheet.absoluteFill,
+					{
+						top: Dimensions.get("screen").height - 300,
+						left: Dimensions.get("screen").width / 4,
+						height: 100,
+						width: 200,
+						backgroundColor: "#f4978e",
+						borderRadius: 35,
+					},
+				]}
 			>
-				<Icon size={20} name="swap" />
-			</Pressable>
-		</View>
+				<Pressable
+					onPress={() => {
+						setVisible(false);
+					}}
+					style={[
+						{
+							height: "100%",
+							width: "100%",
+							alignItems: "center",
+							justifyContent: "center",
+						},
+					]}
+				>
+					<CustomText style={[{ color: "black" }]}> SAVE </CustomText>
+				</Pressable>
+			</View>
+			<View style={{ height: "100%", width: "100%", paddingHorizontal: 20 }}>
+				<View style={{ flexDirection: "row" }}>
+					<TextInput
+						placeholder="Title..."
+						style={[styles.largeText, styles.titleInput, { flex: 0.9 }]}
+					></TextInput>
+					<View style={[{ flex: 0.1, alignSelf: "flex-end" }]}>
+						<TabBarIcon name="tago" style={{ color: "#f4978e" }} />
+					</View>
+				</View>
+				<View>
+					<EmojiPickerInputComponent />
+				</View>
+				<View style={{ width: "100%", height: 400 }}>
+					<TextInput
+						style={[styles.entryText, styles.entryInput]}
+						multiline
+						placeholder={PLACEHOLDER_TEXT}
+					/>
+				</View>
+			</View>
+		</TouchableWithoutFeedback>
 	);
 };
 
@@ -179,23 +190,29 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
 								/>
 							</View>
 							<EmojiPickerInput handleChange={handleChange} />
-							<Input
-								placeholder="Write whatever you need.."
-								size="large"
-								multiline={true}
-								textStyle={{ height: 400 }}
-								numberOfLines={20}
-								onChangeText={handleChange("content")}
-								onBlur={handleBlur("content")}
-								value={values.content}
-							/>
+							<TouchableOpacity
+								activeOpacity={1}
+								onPress={() => Keyboard.dismiss()}
+								style={{ width: "100%" }}
+							>
+								<Input
+									placeholder="Write whatever you need.."
+									size="large"
+									multiline={true}
+									textStyle={{ height: 400 }}
+									numberOfLines={20}
+									onChangeText={handleChange("content")}
+									onBlur={handleBlur("content")}
+									value={values.content}
+								/>
+							</TouchableOpacity>
 						</ScrollView>
 						<KeyboardAvoidingView
 							behavior={Platform.OS === "ios" ? "padding" : "height"}
 							style={{
 								flex: 1,
 							}}
-							keyboardVerticalOffset={150}
+							keyboardVerticalOffset={100}
 						>
 							<Button
 								onPress={() => {
@@ -227,17 +244,3 @@ export const NewEntryWidgetForm = connectRedux(
 	null,
 	mapDispatchToProps
 )(NewEntryWidgetFormComponent);
-
-const styles = StyleSheet.create({
-	container: {
-		minHeight: "5%",
-		paddingTop: 10,
-	},
-	widgetButtonContainer: {
-		borderRadius: 15,
-	},
-	formContainer: {
-		padding: 0,
-		alignSelf: "flex-start",
-	},
-});

@@ -20,9 +20,10 @@ import Colors from "../constants/Colors";
 // https://icons.expo.fyi/
 export function TabBarIcon(props: {
   name: React.ComponentProps<typeof Icon>["name"];
+  style: {}
 }) {
   return (
-      <Icon size={30} color="blue" style={{color: "white"}} {...props} />
+      <Icon size={30} color="blue" style={props.style} {...props} />
   );
 }
 

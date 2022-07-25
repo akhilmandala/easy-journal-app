@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Button, Card, Layout, Modal } from "@ui-kitten/components";
-import { NewEntryWidgetForm } from "./NewEntryForm";
+import { NewEntryFormRedesigned, NewEntryWidgetForm } from "./NewEntryForm";
 import { CustomText } from "../CustomText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -55,7 +55,7 @@ export const NewEntryWidget = ({ labels }) => {
 
 			<Modal visible={visible} style={styles.newEntryFormContainer}>
 				<SafeAreaView>
-					<NewEntryWidgetForm setVisible={() => setVisible(!visible)} />
+					<NewEntryFormRedesigned setVisible={setVisible}/>
 				</SafeAreaView>
 			</Modal>
 		</View>
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
 		height: "100%",
 		width: "100%",
 		backgroundColor: "#FAD2E1",
+		paddingTop: 80
 	},
 	text: {
 		color: "black",
