@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Button, Card, Layout, Modal } from "@ui-kitten/components";
 import { NewEntryWidgetForm } from "./NewEntryForm";
 
-export const NewEntryWidget = () => {
+export const NewEntryWidget = ({ labels }) => {
 	const [visible, setVisible] = React.useState(false);
 
 	return (
@@ -30,7 +30,7 @@ export const NewEntryWidget = () => {
 					]}
 				>
 					<View>
-						<Text>Label 1</Text>
+						<Text>{labels[0]}</Text>
 					</View>
 				</Pressable>
 				<Pressable
@@ -46,7 +46,7 @@ export const NewEntryWidget = () => {
 					]}
 				>
 					<View>
-						<Text>Label 2</Text>
+						<Text>{labels[1]}</Text>
 					</View>
 				</Pressable>
 			</View>

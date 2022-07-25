@@ -6,38 +6,13 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Svg } from "react-native-svg";
 import { connect as connectRedux, useDispatch, useSelector } from "react-redux";
-import { selectCheckinsWithinRange } from "../../redux/checkIns/checkInsSlice";
+import { isNegativeCheckIn, isNeutralCheckin, isPositiveCheckIn, selectCheckinsWithinRange } from "../../redux/checkIns/checkInsSlice";
 
 export const CheckInWidgetStatComponent = ({currentFilter, textStyle}) => {
   const checkIns = useSelector(state => selectCheckinsWithinRange(state, 10));
-  let positiveCheckIns = checkIns.filter((checkIn: CheckIn) =>
-    [].concat
-      .apply(
-        [],
-        [
-          Object.keys(EmojiCluster["Cluster 4"]),
-          Object.keys(EmojiCluster["Cluster 5"]),
-          Object.keys(EmojiCluster["Cluster 6"]),
-        ]
-      )
-      .includes(checkIn.iconName)
-  );
-  let neutralCheckIns = checkIns.filter((checkIn) =>
-    [].concat
-      .apply([], [Object.keys(EmojiCluster["Cluster 3"])])
-      .includes(checkIn.iconName)
-  );
-  let negativeCheckIns = checkIns.filter((checkIn) =>
-    [].concat
-      .apply(
-        [],
-        [
-          Object.keys(EmojiCluster["Cluster 1"]),
-          Object.keys(EmojiCluster["Cluster 2"]),
-        ]
-      )
-      .includes(checkIn.iconName)
-  );
+  let positiveCheckIns = checkIns.filter(isPositiveCheckIn);
+  let neutralCheckIns = checkIns.filter(isNeutralCheckin);
+  let negativeCheckIns = checkIns.filter(isNegativeCheckIn);
 
   return (
     <View style={styles.container}>

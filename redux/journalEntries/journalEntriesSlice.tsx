@@ -88,13 +88,18 @@ export const journalEntriesSlice = createSlice({
 	},
 });
 
+/**  */
 export const selectJournalEntriesState = (state) => state.journalEntries;
+/** */
 export const selectJournalEntries = (state) => state.journalEntries.entries;
+/** */
 export const selectJournalEntryOrder = (state) =>
 	state.journalEntries.entryOrder;
+/** */
 export const selectAllJournalEntryLabels = (state) =>
 	state.journalEntries.labels;
 
+/** */
 export const selectRecentEntriesWithinRange = createSelector(
 	[selectJournalEntryOrder, selectJournalEntries, (state, range) => range],
 	(entryOrder: [], entries: {}, range) => {
@@ -106,6 +111,7 @@ export const selectRecentEntriesWithinRange = createSelector(
 	}
 );
 
+/** */
 export const selectEarliestEntry = createSelector(
 	[selectJournalEntryOrder, selectJournalEntries],
 	(entryOrder, entries) => {
@@ -115,6 +121,7 @@ export const selectEarliestEntry = createSelector(
 	}
 );
 
+/** */
 export const selectMostRecentJournalEntry = createSelector(
 	[selectJournalEntryOrder, selectJournalEntries],
 	(entryOrder: [], entries: {}) => {
@@ -122,6 +129,7 @@ export const selectMostRecentJournalEntry = createSelector(
 	}
 );
 
+/** */
 export interface EntrySearchFilter {
 	ascending: boolean;
 	labels: string[];
@@ -129,13 +137,17 @@ export interface EntrySearchFilter {
 	searchTerm: string;
 }
 
-const hasLabel = (entry: JournalEntry, labels: string[]) =>{
+/** */
+const hasLabel = (entry: JournalEntry, labels: string[]) => {
 	if (labels.length > 0) {
-		return entry.labels.length > 0 ? entry.labels.some((label) => labels.includes(label)) : false
+		return entry.labels.length > 0
+			? entry.labels.some((label) => labels.includes(label))
+			: false;
 	}
-	return true
-}
+	return true;
+};
 
+/** */
 const hasSearchTerm = (entry: JournalEntry, searchTerm: string) => {
 	searchTerm = searchTerm.toLowerCase();
 	return searchTerm !== ""
@@ -143,21 +155,25 @@ const hasSearchTerm = (entry: JournalEntry, searchTerm: string) => {
 				entry.content.toLowerCase().includes(searchTerm)
 		: entry;
 };
+/** */
 const withinDateRange = (entry: JournalEntry, dateRange: Number[]) => {
 	/**
+	 * [0, 0] means all entries
 	 * [0, X] means all entries up till X
 	 * [X, 0] means all entries after X
 	 * [X, Y] means all entries between X and Y
 	 */
-	if (dateRange[0] == 0) {
+	if (dateRange[0] == 0 && dateRange[1] == 0) {
+		return true
+	}else if (dateRange[0] == 0 ) {
 		return entry.date <= dateRange[1];
-	}
-	if (dateRange[1] == 0) {
+	}else if (dateRange[1] == 0) {
 		return entry.date >= dateRange[0];
 	}
 	return entry.date > dateRange[0] && entry.date < dateRange[1];
 };
 
+/** */
 export const selectEntriesWithFilter = createSelector(
 	[
 		selectJournalEntryOrder,
@@ -174,7 +190,6 @@ export const selectEntriesWithFilter = createSelector(
 			entryOrder = [].concat(entryOrder).reverse();
 		}
 
-
 		let filteredEntries = Object.values(entries).filter(
 			(entry) =>
 				hasLabel(entry, labels) &&
@@ -183,8 +198,8 @@ export const selectEntriesWithFilter = createSelector(
 		);
 		let remainingEntryIds = filteredEntries.map((entry) => entry.id);
 		let sortedFilteredEntries = entryOrder
-			.filter(({id}) => remainingEntryIds.includes(id))
-			.map(({id}) => filteredEntries.find(entry => entry.id === id));
+			.filter(({ id }) => remainingEntryIds.includes(id))
+			.map(({ id }) => filteredEntries.find((entry) => entry.id === id));
 		console.log(sortedFilteredEntries);
 		return sortedFilteredEntries;
 	}
