@@ -10,6 +10,7 @@ import {
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { CustomText } from "../CustomText";
+import { SlidingCounter } from "../../screens/Stat";
 
 export const NewCheckInButton = () => {
 	const [visible, setVisible] = React.useState(false);
@@ -49,29 +50,9 @@ export const NewCheckInButton = () => {
 			</Pressable>
 			<View style={[styles.addSpecificCheckInSection]}>
 				{shortcutEmojis.map((emoji, index) => (
-					<PanGestureHandler onGestureEvent={gestureHandler}>
-						<View>
-							<Pressable
-								style={[
-									styles.checkInEmojiShortcutButton,
-									{
-										backgroundColor: checkInShortcutColors[index],
-										height: "100%",
-									},
-								]}
-							>
-								<View>
-									<Svg
-										height={"40px"}
-										width={"40px"}
-										preserveAspectRatio="xMinYMin slice"
-									>
-										{retrieveSVGAssetFromUnicode(emoji)}
-									</Svg>
-								</View>
-							</Pressable>
-						</View>
-					</PanGestureHandler>
+					<View style={[styles.checkInEmojiShortcutButton, {height: "100%", backgroundColor:checkInShortcutColors[index]}]}>
+						<SlidingCounter />
+					</View>
 				))}
 			</View>
 		</View>
@@ -107,5 +88,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		height: "100%",
+        width: 40
 	},
 });

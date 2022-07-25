@@ -25,11 +25,8 @@ const clamp = (value: number, min: number, max: number) => {
 };
 
 const BUTTON_WIDTH = 170;
-const DEFAULT_SHORTCUT_EMOJIS = ["1F642",
-"1F610",
-"2639",]
 
-export const SlidingCounter = ({options = DEFAULT_SHORTCUT_EMOJIS}) => {
+const SlidingCounter = () => {
 	let [shortcutEmojis, setShortcutEmojis] = useState([
 		"1F642",
 		"1F610",
@@ -40,35 +37,33 @@ export const SlidingCounter = ({options = DEFAULT_SHORTCUT_EMOJIS}) => {
 	const translateY = useSharedValue(0);
 
 	const [count, setCount] = useState(0);
-  console.log(count)
-	const MAX_SLIDE_OFFSET = 150 * 0.3;
+
+	const MAX_SLIDE_OFFSET = BUTTON_WIDTH * 0.3;
 
 	// wrapper function
 	const incrementCount = useCallback(() => {
-    if(count == options.length - 1) {
-      setCount(0)
-    } else {
-      setCount(count + 1);
-	}}, [count, options]);
+		// external library function
+		setCount((currentCount) => currentCount + 1);
+	}, []);
 
 	const decrementCount = useCallback(() => {
-    if(count == 0) {
-      setCount(options.length - 1)
-    } else {
-      setCount(count - 1);
-    }
-	}, [count, options]);
+		setCount((currentCount) => currentCount - 1);
+	}, []);
+
+	const resetCount = useCallback(() => {
+		setCount(0);
+	}, []);
 
 	const onPanGestureEvent =
 		useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
 			onActive: (event) => {
-				translateX.value = clamp(event.translationX, 0, 0);
-
-				translateY.value = clamp(
-					event.translationY,
+				translateX.value = clamp(
+					event.translationX,
 					-MAX_SLIDE_OFFSET,
 					MAX_SLIDE_OFFSET
 				);
+
+				translateY.value = clamp(event.translationY, 0, MAX_SLIDE_OFFSET);
 			},
 			onEnd: () => {
 				if (translateX.value === MAX_SLIDE_OFFSET) {
@@ -78,9 +73,7 @@ export const SlidingCounter = ({options = DEFAULT_SHORTCUT_EMOJIS}) => {
 					// Decrement
 					runOnJS(decrementCount)();
 				} else if (translateY.value === MAX_SLIDE_OFFSET) {
-					runOnJS(decrementCount)();
-				} else if (translateY.value === -MAX_SLIDE_OFFSET) {
-					runOnJS(incrementCount)();
+					runOnJS(resetCount)();
 				}
 
 				translateX.value = withSpring(0);
@@ -97,9 +90,58 @@ export const SlidingCounter = ({options = DEFAULT_SHORTCUT_EMOJIS}) => {
 		};
 	}, []);
 
+	const rPlusMinusIconStyle = useAnimatedStyle(() => {
+		const opacityX = interpolate(
+			translateX.value,
+			[-MAX_SLIDE_OFFSET, 0, MAX_SLIDE_OFFSET],
+			[0.4, 0.8, 0.4]
+		);
+
+		const opacityY = interpolate(
+			translateY.value,
+			[0, MAX_SLIDE_OFFSET],
+			[1, 0]
+		);
+
+		return {
+			opacity: opacityX * opacityY,
+		};
+	}, []);
+
+	const rCloseIconStyle = useAnimatedStyle(() => {
+		const opacity = interpolate(
+			translateY.value,
+			[0, MAX_SLIDE_OFFSET],
+			[0, 0.8]
+		);
+
+		return {
+			opacity,
+		};
+	}, []);
+
+	const rButtonStyle = useAnimatedStyle(() => {
+		return {
+			transform: [
+				{
+					translateX: translateX.value * 0.1,
+				},
+				{ translateY: translateY.value * 0.1 },
+			],
+		};
+	}, []);
 
 	return (
-		<View>
+		<Animated.View style={[styles.button, rButtonStyle]}>
+			<Animated.View style={rPlusMinusIconStyle}>
+				<AntDesign name="minus" color={"white"} size={ICON_SIZE} />
+			</Animated.View>
+			<Animated.View style={rCloseIconStyle}>
+				<AntDesign name="close" color={"white"} size={ICON_SIZE} />
+			</Animated.View>
+			<Animated.View style={rPlusMinusIconStyle}>
+				<AntDesign name="plus" color={"white"} size={ICON_SIZE} />
+			</Animated.View>
 			<View
 				style={{
 					...StyleSheet.absoluteFillObject,
@@ -114,12 +156,12 @@ export const SlidingCounter = ({options = DEFAULT_SHORTCUT_EMOJIS}) => {
 							width={"40px"}
 							preserveAspectRatio="xMinYMin slice"
 						>
-							{retrieveSVGAssetFromUnicode(options[count])}
+							{retrieveSVGAssetFromUnicode(shortcutEmojis[count])}
 						</Svg>
 					</Animated.View>
 				</PanGestureHandler>
 			</View>
-		</View>
+		</Animated.View>
 	);
 };
 
@@ -141,12 +183,13 @@ const styles = StyleSheet.create({
 		paddingTop: 72,
 	},
 	button: {
-		height: 150,
-		width: 50,
+		height: 70,
+		width: BUTTON_WIDTH,
 		backgroundColor: "#111111",
+		borderRadius: 50,
 		alignItems: "center",
-		justifyContent: "space-between",
-		flexDirection: "column",
+		justifyContent: "space-evenly",
+		flexDirection: "row",
 	},
 	countText: {
 		fontSize: 25,
@@ -155,6 +198,7 @@ const styles = StyleSheet.create({
 	circle: {
 		height: 50,
 		width: 50,
+		backgroundColor: "#232323",
 		borderRadius: 25,
 		position: "absolute",
 		justifyContent: "center",
