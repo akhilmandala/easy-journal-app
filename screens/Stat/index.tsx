@@ -1,182 +1,249 @@
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  TouchableOpacity,
-  Modal,
-  Dimensions,
-} from 'react-native';
-import { WebView } from 'react-native-webview';
-import { AntDesign as Icon } from "@expo/vector-icons"
+import React, { Component } from 'react';
+import { AppRegistry, ScrollView, Text, StyleSheet} from 'react-native';
 
-const Stat = ({
-  onMessage = (d) => console.log(d.imgs),
-  editable = true,
-  initDelta = exampleDelta,
-}) => {
-  const [modal, setModal] = useState(false);
-  const [delta, setDelta] = useState(initDelta);
-  const height = parseInt(Dimensions.get('window').height * 0.5).toString();
+const styles=StyleSheet.create({
+    scroller: {
+        flex: 1,
+    }
+});
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {editable ? (
-        <TouchableOpacity
-          style={{ alignSelf: 'flex-end' }}
-          onPress={() => {
-            setModal(true);
-          }}>
-          <Icon
-            name="edit"
-            style={{
-              fontWeight: 'bold',
-              fontSize: 35,
-              paddingHorizontal: 6,
-            }}
-          />
-        </TouchableOpacity>
-      ) : undefined}
-      <WebView
-        source={{
-          html: viewHtmls[0] + viewHtmls[1] + delta + viewHtmls[2],
-        }}
-      />
-      <Modal animationType="slide" transparent={true} visible={modal}>
-        <View
-          style={{
-            backgroundColor: 'black',
-            opacity: 0.7,
-            flex: 1,
-            zIndex: -1,
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}></View>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            marginVertical: 60,
-            marginHorizontal: 20,
-            borderRadius: 40,
-          }}>
-          <WebView
-            style={{ borderRadius: 20 }}
-            source={{
-              html: editHtmls[0] + height + editHtmls[1] + delta + editHtmls[2],
-            }}
-            onMessage={(e) => {
-              var delt = e.nativeEvent.data,
-                n,
-                imgs = [];
-              var deltaParsed = JSON.parse(delt);
-              for (n = 0; n < deltaParsed.ops.length; n++) {
-                var img = deltaParsed.ops[n].insert.image;
-                if (img) imgs.push({ path: img });
-              }
-              setDelta(delt);
-              setModal(false);
-              onMessage({ delt, imgs });
-            }}
-          />
-        </SafeAreaView>
-      </Modal>
-    </SafeAreaView>
-  );
-};
-
-const exampleDelta = JSON.stringify([
-  { insert: 'Hello ' },
-  { insert: 'World!', attributes: { bold: true } },
-  { insert: '\n' },
-]);
-
-const editHtmls = [
-  // ============ 0 ============
-  `<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-    <div id="editor" style=" font-size: 18px; height: `,
-  // ============ 1 ============
-  `;"></div>
-    <div id="toolbar">
-        <!-- Add font size dropdown -->
-        <select class="ql-size">
-            <option value="small"></option>
-            <!-- Note a missing, thus falsy value, is used to reset to default -->
-            <option selected></option>
-            <option value="large"></option>
-            <option value="huge"></option>
-        </select>
-        <!-- Add a bold button -->
-        <button class="ql-bold"></button>
-        <button class="ql-italic"></button>
-        <button class="ql-underline"></button>
-        <button class="ql-strike"></button>
-        <button class="ql-image"></button>
-        <button class="ql-blockquote"></button>
-        <button class="ql-code-block"></button>
-        <button class="ql-list" value="ordered"></button>
-        <button class="ql-list" value="bullet"></button>
-        <button class="ql-script" value="sub"></button>
-        <button class="ql-script" value="super"></button>
-        <button class="ql-indent" value="-1"></button>
-        <button class="ql-indent" value="+1"></button>
-        <button class="ql-direction" value="rtl"></button>
-        <select class="ql-color"></select>
-        <select class="ql-background"></select>
-        <select class="ql-font"></select>
-        <select class="ql-align"></select>
-        <button class="ql-clean"></button>
-    
-        <!-- But you can also add your own -->
-        <button class="mdc-button mdc-button--raised foo-button" 
-            style="background-color:#000000; color:#FFFFFF; left:120; top:6 "
-        >
-            <div class="mdc-button__ripple"></div>
-            <span class="mdc-button__label">SALVA</span>
-        </button>
-    </div>
-  
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script><script>
-        var okButton = document.querySelector('.foo-button');
-        mdc.ripple.MDCRipple.attachTo(okButton);
-        okButton.addEventListener("click", function(){
-            window.ReactNativeWebView.postMessage(JSON.stringify(quill.getContents()))
-        })
-        var quill = new Quill('#editor',{ 
-            modules: { toolbar: '#toolbar' },
-            theme: 'snow' 
-        }); 
-        quill.setContents(`,
-  // ============ 2 ============
-  `);
-    </script>`,
-];
-
-const viewHtmls = [
-  // ============ 0 ============
-  `<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-    <div id="editor" style=" font-size: 18px; height: `,
-  // ============ 1 ============
-  `;"></div>
-    <div id="toolbar" style="display:none"></div>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script><script>
-        var quill = new Quill('#editor',{ 
-            modules: { toolbar: '#toolbar' },
-            theme: 'snow' 
-        }); 
-        quill.setContents(`,
-  // ============ 2 ============
-  `); quill.disable(); 
-    </script>`,
-];
-
-export default Stat;
+export default class IosFonts extends Component{
+  render (){
+    return(
+      <ScrollView style={styles.scroller}>
+        <Text style={{fontFamily: 'Academy Engraved LET'}}>Academy Engraved LET </Text>
+        <Text style={{fontFamily: 'AcademyEngravedLetPlain'}}>AcademyEngravedLetPlain </Text>
+        <Text style={{fontFamily: 'Al Nile'}}>Al Nile </Text>
+        <Text style={{fontFamily: 'AlNile-Bold'}}>AlNile-Bold </Text>
+        <Text style={{fontFamily: 'American Typewriter'}}>American Typewriter </Text>
+        <Text style={{fontFamily: 'AmericanTypewriter-Bold'}}>AmericanTypewriter-Bold </Text>
+        <Text style={{fontFamily: 'AmericanTypewriter-Condensed'}}>AmericanTypewriter-Condensed </Text>
+        <Text style={{fontFamily: 'AmericanTypewriter-CondensedBold'}}>AmericanTypewriter-CondensedBold </Text>
+        <Text style={{fontFamily: 'AmericanTypewriter-CondensedLight'}}>AmericanTypewriter-CondensedLight </Text>
+        <Text style={{fontFamily: 'AmericanTypewriter-Light'}}>AmericanTypewriter-Light </Text>
+        <Text style={{fontFamily: 'Apple Color Emoji'}}>Apple Color Emoji </Text>
+        <Text style={{fontFamily: 'Apple SD Gothic Neo'}}>Apple SD Gothic Neo </Text>
+        <Text style={{fontFamily: 'AppleColorEmoji'}}>AppleColorEmoji </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-Bold'}}>AppleSDGothicNeo-Bold </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-Light'}}>AppleSDGothicNeo-Light </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-Medium'}}>AppleSDGothicNeo-Medium </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-Regular'}}>AppleSDGothicNeo-Regular </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-SemiBold'}}>AppleSDGothicNeo-SemiBold </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-Thin'}}>AppleSDGothicNeo-Thin </Text>
+        <Text style={{fontFamily: 'AppleSDGothicNeo-UltraLight'}}>AppleSDGothicNeo-UltraLight </Text>
+        <Text style={{fontFamily: 'Arial'}}>Arial </Text>
+        <Text style={{fontFamily: 'Arial Hebrew'}}>Arial Hebrew </Text>
+        <Text style={{fontFamily: 'Arial Rounded MT Bold'}}>Arial Rounded MT Bold </Text>
+        <Text style={{fontFamily: 'Arial-BoldItalicMT'}}>Arial-BoldItalicMT </Text>
+        <Text style={{fontFamily: 'Arial-BoldMT'}}>Arial-BoldMT </Text>
+        <Text style={{fontFamily: 'Arial-ItalicMT'}}>Arial-ItalicMT </Text>
+        <Text style={{fontFamily: 'ArialHebrew'}}>ArialHebrew </Text>
+        <Text style={{fontFamily: 'ArialHebrew-Bold'}}>ArialHebrew-Bold </Text>
+        <Text style={{fontFamily: 'ArialHebrew-Light'}}>ArialHebrew-Light </Text>
+        <Text style={{fontFamily: 'ArialMT'}}>ArialMT </Text>
+        <Text style={{fontFamily: 'ArialRoundedMTBold'}}>ArialRoundedMTBold </Text>
+        <Text style={{fontFamily: 'Avenir'}}>Avenir </Text>
+        <Text style={{fontFamily: 'Avenir Next'}}>Avenir Next </Text>
+        <Text style={{fontFamily: 'Avenir Next Condensed'}}>Avenir Next Condensed </Text>
+        <Text style={{fontFamily: 'Avenir-Black'}}>Avenir-Black </Text>
+        <Text style={{fontFamily: 'Avenir-BlackOblique'}}>Avenir-BlackOblique </Text>
+        <Text style={{fontFamily: 'Avenir-Book'}}>Avenir-Book </Text>
+        <Text style={{fontFamily: 'Avenir-BookOblique'}}>Avenir-BookOblique </Text>
+        <Text style={{fontFamily: 'Avenir-Heavy'}}>Avenir-Heavy </Text>
+        <Text style={{fontFamily: 'Avenir-HeavyOblique'}}>Avenir-HeavyOblique </Text>
+        <Text style={{fontFamily: 'Avenir-Light'}}>Avenir-Light </Text>
+        <Text style={{fontFamily: 'Avenir-LightOblique'}}>Avenir-LightOblique </Text>
+        <Text style={{fontFamily: 'Avenir-Medium'}}>Avenir-Medium </Text>
+        <Text style={{fontFamily: 'Avenir-MediumOblique'}}>Avenir-MediumOblique </Text>
+        <Text style={{fontFamily: 'Avenir-Oblique'}}>Avenir-Oblique </Text>
+        <Text style={{fontFamily: 'Avenir-Roman'}}>Avenir-Roman </Text>
+        <Text style={{fontFamily: 'AvenirNext-Bold'}}>AvenirNext-Bold </Text>
+        <Text style={{fontFamily: 'AvenirNext-BoldItalic'}}>AvenirNext-BoldItalic </Text>
+        <Text style={{fontFamily: 'AvenirNext-DemiBold'}}>AvenirNext-DemiBold </Text>
+        <Text style={{fontFamily: 'AvenirNext-DemiBoldItalic'}}>AvenirNext-DemiBoldItalic </Text>
+        <Text style={{fontFamily: 'AvenirNext-Heavy'}}>AvenirNext-Heavy </Text>
+        <Text style={{fontFamily: 'AvenirNext-HeavyItalic'}}>AvenirNext-HeavyItalic </Text>
+        <Text style={{fontFamily: 'AvenirNext-Italic'}}>AvenirNext-Italic </Text>
+        <Text style={{fontFamily: 'AvenirNext-Medium'}}>AvenirNext-Medium </Text>
+        <Text style={{fontFamily: 'AvenirNext-MediumItalic'}}>AvenirNext-MediumItalic </Text>
+        <Text style={{fontFamily: 'AvenirNext-Regular'}}>AvenirNext-Regular </Text>
+        <Text style={{fontFamily: 'AvenirNext-UltraLight'}}>AvenirNext-UltraLight </Text>
+        <Text style={{fontFamily: 'AvenirNext-UltraLightItalic'}}>AvenirNext-UltraLightItalic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-Bold'}}>AvenirNextCondensed-Bold </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-BoldItalic'}}>AvenirNextCondensed-BoldItalic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-DemiBold'}}>AvenirNextCondensed-DemiBold </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-DemiBoldItalic'}}>AvenirNextCondensed-DemiBoldItalic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-Heavy'}}>AvenirNextCondensed-Heavy </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-HeavyItalic'}}>AvenirNextCondensed-HeavyItalic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-Italic'}}>AvenirNextCondensed-Italic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-Medium'}}>AvenirNextCondensed-Medium </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-MediumItalic'}}>AvenirNextCondensed-MediumItalic </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-Regular'}}>AvenirNextCondensed-Regular </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-UltraLight'}}>AvenirNextCondensed-UltraLight </Text>
+        <Text style={{fontFamily: 'AvenirNextCondensed-UltraLightItalic'}}>AvenirNextCondensed-UltraLightItalic </Text>
+        <Text style={{fontFamily: 'Bangla Sangam MN'}}>Bangla Sangam MN </Text>
+        <Text style={{fontFamily: 'Baskerville'}}>Baskerville </Text>
+        <Text style={{fontFamily: 'Baskerville-Bold'}}>Baskerville-Bold </Text>
+        <Text style={{fontFamily: 'Baskerville-BoldItalic'}}>Baskerville-BoldItalic </Text>
+        <Text style={{fontFamily: 'Baskerville-Italic'}}>Baskerville-Italic </Text>
+        <Text style={{fontFamily: 'Baskerville-SemiBold'}}>Baskerville-SemiBold </Text>
+        <Text style={{fontFamily: 'Baskerville-SemiBoldItalic'}}>Baskerville-SemiBoldItalic </Text>
+        <Text style={{fontFamily: 'Bodoni 72'}}>Bodoni 72 </Text>
+        <Text style={{fontFamily: 'Bodoni 72 Oldstyle'}}>Bodoni 72 Oldstyle </Text>
+        <Text style={{fontFamily: 'Bodoni 72 Smallcaps'}}>Bodoni 72 Smallcaps </Text>
+        <Text style={{fontFamily: 'Bodoni Ornaments'}}>Bodoni Ornaments </Text>
+        <Text style={{fontFamily: 'BodoniOrnamentsITCTT'}}>BodoniOrnamentsITCTT </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoITCTT-Bold'}}>BodoniSvtyTwoITCTT-Bold </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoITCTT-Book'}}>BodoniSvtyTwoITCTT-Book </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoITCTT-BookIta'}}>BodoniSvtyTwoITCTT-BookIta </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoOSITCTT-Bold'}}>BodoniSvtyTwoOSITCTT-Bold </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoOSITCTT-Book'}}>BodoniSvtyTwoOSITCTT-Book </Text>
+        <Text style={{fontFamily: 'BodoniSvtyTwoSCITCTT-Book'}}>BodoniSvtyTwoSCITCTT-Book </Text>
+        <Text style={{fontFamily: 'Bradley Hand'}}>Bradley Hand </Text>
+        <Text style={{fontFamily: 'BradleyHandITCTT-Bold'}}>BradleyHandITCTT-Bold </Text>
+        <Text style={{fontFamily: 'Chalkboard SE'}}>Chalkboard SE </Text>
+        <Text style={{fontFamily: 'ChalkboardSE-Bold'}}>ChalkboardSE-Bold </Text>
+        <Text style={{fontFamily: 'ChalkboardSE-Light'}}>ChalkboardSE-Light </Text>
+        <Text style={{fontFamily: 'ChalkboardSE-Regular'}}>ChalkboardSE-Regular </Text>
+        <Text style={{fontFamily: 'Chalkduster'}}>Chalkduster </Text>
+        <Text style={{fontFamily: 'Chalkduster'}}>Chalkduster </Text>
+        <Text style={{fontFamily: 'Cochin'}}>Cochin </Text>
+        <Text style={{fontFamily: 'Cochin-Bold'}}>Cochin-Bold </Text>
+        <Text style={{fontFamily: 'Cochin-BoldItalic'}}>Cochin-BoldItalic </Text>
+        <Text style={{fontFamily: 'Cochin-Italic'}}>Cochin-Italic </Text>
+        <Text style={{fontFamily: 'Copperplate'}}>Copperplate </Text>
+        <Text style={{fontFamily: 'Copperplate-Bold'}}>Copperplate-Bold </Text>
+        <Text style={{fontFamily: 'Copperplate-Light'}}>Copperplate-Light </Text>
+        <Text style={{fontFamily: 'Courier'}}>Courier </Text>
+        <Text style={{fontFamily: 'Courier New'}}>Courier New </Text>
+        <Text style={{fontFamily: 'Courier-Bold'}}>Courier-Bold </Text>
+        <Text style={{fontFamily: 'Courier-BoldOblique'}}>Courier-BoldOblique </Text>
+        <Text style={{fontFamily: 'Courier-Oblique'}}>Courier-Oblique </Text>
+        <Text style={{fontFamily: 'CourierNewPS-BoldItalicMT'}}>CourierNewPS-BoldItalicMT </Text>
+        <Text style={{fontFamily: 'CourierNewPS-BoldMT'}}>CourierNewPS-BoldMT </Text>
+        <Text style={{fontFamily: 'CourierNewPS-ItalicMT'}}>CourierNewPS-ItalicMT </Text>
+        <Text style={{fontFamily: 'CourierNewPSMT'}}>CourierNewPSMT </Text>
+        <Text style={{fontFamily: 'Damascus'}}>Damascus </Text>
+        <Text style={{fontFamily: 'DamascusBold'}}>DamascusBold </Text>
+        <Text style={{fontFamily: 'DamascusLight'}}>DamascusLight </Text>
+        <Text style={{fontFamily: 'DamascusMedium'}}>DamascusMedium </Text>
+        <Text style={{fontFamily: 'DamascusSemiBold'}}>DamascusSemiBold </Text>
+        <Text style={{fontFamily: 'Devanagari Sangam MN'}}>Devanagari Sangam MN </Text>
+        <Text style={{fontFamily: 'DevanagariSangamMN'}}>DevanagariSangamMN </Text>
+        <Text style={{fontFamily: 'DevanagariSangamMN-Bold'}}>DevanagariSangamMN-Bold </Text>
+        <Text style={{fontFamily: 'Didot'}}>Didot </Text>
+        <Text style={{fontFamily: 'Didot-Bold'}}>Didot-Bold </Text>
+        <Text style={{fontFamily: 'Didot-Italic'}}>Didot-Italic </Text>
+        <Text style={{fontFamily: 'DiwanMishafi'}}>DiwanMishafi </Text>
+        <Text style={{fontFamily: 'Euphemia UCAS'}}>Euphemia UCAS </Text>
+        <Text style={{fontFamily: 'EuphemiaUCAS-Bold'}}>EuphemiaUCAS-Bold </Text>
+        <Text style={{fontFamily: 'EuphemiaUCAS-Italic'}}>EuphemiaUCAS-Italic </Text>
+        <Text style={{fontFamily: 'Farah'}}>Farah </Text>
+        <Text style={{fontFamily: 'Futura'}}>Futura </Text>
+        <Text style={{fontFamily: 'Futura-CondensedExtraBold'}}>Futura-CondensedExtraBold </Text>
+        <Text style={{fontFamily: 'Futura-CondensedMedium'}}>Futura-CondensedMedium </Text>
+        <Text style={{fontFamily: 'Futura-Medium'}}>Futura-Medium </Text>
+        <Text style={{fontFamily: 'Futura-MediumItalic'}}>Futura-MediumItalic </Text>
+        <Text style={{fontFamily: 'Geeza Pro'}}>Geeza Pro </Text>
+        <Text style={{fontFamily: 'GeezaPro-Bold'}}>GeezaPro-Bold </Text>
+        <Text style={{fontFamily: 'Georgia'}}>Georgia </Text>
+        <Text style={{fontFamily: 'Georgia-Bold'}}>Georgia-Bold </Text>
+        <Text style={{fontFamily: 'Georgia-BoldItalic'}}>Georgia-BoldItalic </Text>
+        <Text style={{fontFamily: 'Georgia-Italic'}}>Georgia-Italic </Text>
+        <Text style={{fontFamily: 'Gill Sans'}}>Gill Sans </Text>
+        <Text style={{fontFamily: 'GillSans-Bold'}}>GillSans-Bold </Text>
+        <Text style={{fontFamily: 'GillSans-BoldItalic'}}>GillSans-BoldItalic </Text>
+        <Text style={{fontFamily: 'GillSans-Italic'}}>GillSans-Italic </Text>
+        <Text style={{fontFamily: 'GillSans-Light'}}>GillSans-Light </Text>
+        <Text style={{fontFamily: 'GillSans-LightItalic'}}>GillSans-LightItalic </Text>
+        <Text style={{fontFamily: 'GillSans-SemiBold'}}>GillSans-SemiBold </Text>
+        <Text style={{fontFamily: 'GillSans-SemiBoldItalic'}}>GillSans-SemiBoldItalic </Text>
+        <Text style={{fontFamily: 'GillSans-UltraBold'}}>GillSans-UltraBold </Text>
+        <Text style={{fontFamily: 'Helvetica'}}>Helvetica </Text>
+        <Text style={{fontFamily: 'Helvetica Neue'}}>Helvetica Neue </Text>
+        <Text style={{fontFamily: 'Helvetica-Bold'}}>Helvetica-Bold </Text>
+        <Text style={{fontFamily: 'Helvetica-BoldOblique'}}>Helvetica-BoldOblique </Text>
+        <Text style={{fontFamily: 'Helvetica-Light'}}>Helvetica-Light </Text>
+        <Text style={{fontFamily: 'Helvetica-LightOblique'}}>Helvetica-LightOblique </Text>
+        <Text style={{fontFamily: 'Helvetica-Oblique'}}>Helvetica-Oblique </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-Bold'}}>HelveticaNeue-Bold </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-BoldItalic'}}>HelveticaNeue-BoldItalic </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-CondensedBlack'}}>HelveticaNeue-CondensedBlack </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-CondensedBold'}}>HelveticaNeue-CondensedBold </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-Italic'}}>HelveticaNeue-Italic </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-Light'}}>HelveticaNeue-Light </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-LightItalic'}}>HelveticaNeue-LightItalic </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-Medium'}}>HelveticaNeue-Medium </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-MediumItalic'}}>HelveticaNeue-MediumItalic </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-Thin'}}>HelveticaNeue-Thin </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-ThinItalic'}}>HelveticaNeue-ThinItalic </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-UltraLight'}}>HelveticaNeue-UltraLight </Text>
+        <Text style={{fontFamily: 'HelveticaNeue-UltraLightItalic'}}>HelveticaNeue-UltraLightItalic </Text>
+        <Text style={{fontFamily: 'Hiragino Mincho ProN'}}>Hiragino Mincho ProN </Text>
+        <Text style={{fontFamily: 'Hiragino Sans'}}>Hiragino Sans </Text>
+        <Text style={{fontFamily: 'HiraginoSans-W3'}}>HiraginoSans-W3 </Text>
+        <Text style={{fontFamily: 'HiraginoSans-W6'}}>HiraginoSans-W6 </Text>
+        <Text style={{fontFamily: 'HiraMinProN-W3'}}>HiraMinProN-W3 </Text>
+        <Text style={{fontFamily: 'HiraMinProN-W6'}}>HiraMinProN-W6 </Text>
+        <Text style={{fontFamily: 'Hoefler Text'}}>Hoefler Text </Text>
+        <Text style={{fontFamily: 'HoeflerText-Black'}}>HoeflerText-Black </Text>
+        <Text style={{fontFamily: 'HoeflerText-BlackItalic'}}>HoeflerText-BlackItalic </Text>
+        <Text style={{fontFamily: 'HoeflerText-Italic'}}>HoeflerText-Italic </Text>
+        <Text style={{fontFamily: 'HoeflerText-Regular'}}>HoeflerText-Regular </Text>
+        <Text style={{fontFamily: 'Iowan Old Style'}}>Iowan Old Style </Text>
+        <Text style={{fontFamily: 'IowanOldStyle-Bold'}}>IowanOldStyle-Bold </Text>
+        <Text style={{fontFamily: 'IowanOldStyle-BoldItalic'}}>IowanOldStyle-BoldItalic </Text>
+        <Text style={{fontFamily: 'IowanOldStyle-Italic'}}>IowanOldStyle-Italic </Text>
+        <Text style={{fontFamily: 'IowanOldStyle-Roman'}}>IowanOldStyle-Roman </Text>
+        <Text style={{fontFamily: 'Kailasa'}}>Kailasa </Text>
+        <Text style={{fontFamily: 'Kailasa-Bold'}}>Kailasa-Bold </Text>
+        <Text style={{fontFamily: 'Menlo'}}>Menlo </Text>
+        <Text style={{fontFamily: 'Menlo-Bold'}}>Menlo-Bold </Text>
+        <Text style={{fontFamily: 'Menlo-BoldItalic'}}>Menlo-BoldItalic </Text>
+        <Text style={{fontFamily: 'Menlo-Italic'}}>Menlo-Italic </Text>
+        <Text style={{fontFamily: 'Menlo-Regular'}}>Menlo-Regular </Text>
+        <Text style={{fontFamily: 'Mishafi'}}>Mishafi </Text>
+        <Text style={{fontFamily: 'Noteworthy'}}>Noteworthy </Text>
+        <Text style={{fontFamily: 'Noteworthy-Bold'}}>Noteworthy-Bold </Text>
+        <Text style={{fontFamily: 'Noteworthy-Light'}}>Noteworthy-Light </Text>
+        <Text style={{fontFamily: 'Optima'}}>Optima </Text>
+        <Text style={{fontFamily: 'Optima-Bold'}}>Optima-Bold </Text>
+        <Text style={{fontFamily: 'Optima-BoldItalic'}}>Optima-BoldItalic </Text>
+        <Text style={{fontFamily: 'Optima-ExtraBlack'}}>Optima-ExtraBlack </Text>
+        <Text style={{fontFamily: 'Optima-Italic'}}>Optima-Italic </Text>
+        <Text style={{fontFamily: 'Optima-Regular'}}>Optima-Regular </Text>
+        <Text style={{fontFamily: 'Palatino'}}>Palatino </Text>
+        <Text style={{fontFamily: 'Palatino-Bold'}}>Palatino-Bold </Text>
+        <Text style={{fontFamily: 'Palatino-BoldItalic'}}>Palatino-BoldItalic </Text>
+        <Text style={{fontFamily: 'Palatino-Italic'}}>Palatino-Italic </Text>
+        <Text style={{fontFamily: 'Palatino-Roman'}}>Palatino-Roman </Text>
+        <Text style={{fontFamily: 'Papyrus'}}>Papyrus </Text>
+        <Text style={{fontFamily: 'Papyrus-Condensed'}}>Papyrus-Condensed </Text>
+        <Text style={{fontFamily: 'Party LET'}}>Party LET </Text>
+        <Text style={{fontFamily: 'PartyLetPlain'}}>PartyLetPlain </Text>
+        <Text style={{fontFamily: 'Savoye LET'}}>Savoye LET </Text>
+        <Text style={{fontFamily: 'SavoyeLetPlain'}}>SavoyeLetPlain </Text>
+        <Text style={{fontFamily: 'Snell Roundhand'}}>Snell Roundhand </Text>
+        <Text style={{fontFamily: 'SnellRoundhand-Black'}}>SnellRoundhand-Black </Text>
+        <Text style={{fontFamily: 'SnellRoundhand-Bold'}}>SnellRoundhand-Bold </Text>
+        <Text style={{fontFamily: 'Symbol'}}>Symbol </Text>
+        <Text style={{fontFamily: 'Times New Roman'}}>Times New Roman </Text>
+        <Text style={{fontFamily: 'TimesNewRomanPS-BoldItalicMT'}}>TimesNewRomanPS-BoldItalicMT </Text>
+        <Text style={{fontFamily: 'TimesNewRomanPS-BoldMT'}}>TimesNewRomanPS-BoldMT </Text>
+        <Text style={{fontFamily: 'TimesNewRomanPS-ItalicMT'}}>TimesNewRomanPS-ItalicMT </Text>
+        <Text style={{fontFamily: 'TimesNewRomanPSMT'}}>TimesNewRomanPSMT </Text>
+        <Text style={{fontFamily: 'Trebuchet MS'}}>Trebuchet MS </Text>
+        <Text style={{fontFamily: 'Trebuchet-BoldItalic'}}>Trebuchet-BoldItalic </Text>
+        <Text style={{fontFamily: 'TrebuchetMS-Bold'}}>TrebuchetMS-Bold </Text>
+        <Text style={{fontFamily: 'TrebuchetMS-Italic'}}>TrebuchetMS-Italic </Text>
+        <Text style={{fontFamily: 'Verdana'}}>Verdana </Text>
+        <Text style={{fontFamily: 'Verdana-Bold'}}>Verdana-Bold </Text>
+        <Text style={{fontFamily: 'Verdana-BoldItalic'}}>Verdana-BoldItalic </Text>
+        <Text style={{fontFamily: 'Verdana-Italic'}}>Verdana-Italic </Text>
+        <Text style={{fontFamily: 'Zapf Dingbats'}}>Zapf Dingbats </Text>
+        <Text style={{fontFamily: 'ZapfDingbatsITC'}}>ZapfDingbatsITC </Text>
+        <Text style={{fontFamily: 'Zapfino'}}>Zapfino </Text>
+      </ScrollView>
+    );
+  }
+}

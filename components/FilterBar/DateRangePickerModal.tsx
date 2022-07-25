@@ -76,7 +76,7 @@ export function DateRangePicker({filter, setFilter, iconSize}) {
 			<Pressable
 				onPress={() => setDatePickerMenuVisible(!datePickerMenuVisible)}
 			>
-				<Icon name="clockcircleo" size={iconSize ? iconSize : 25}></Icon>
+				<Icon name="clockcircleo" size={iconSize ? iconSize : 25} color="white"></Icon>
 			</Pressable>
 		</View>
 	);

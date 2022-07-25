@@ -11,6 +11,7 @@ export const NewCheckInButton = () => {
 		"2639",
 	]);
 	console.log(shortcutEmojis);
+	let checkInShortcutColors = ["#f6bd60", "#9f86c0", "#f28482"];
 
 	return (
 		<View style={styles.container}>
@@ -21,21 +22,23 @@ export const NewCheckInButton = () => {
 			</Pressable>
 			<View style={[styles.addSpecificCheckInSection]}>
 				{shortcutEmojis.map((emoji, index) => (
-					<Pressable
-						style={[
-							styles.checkInEmojiShortcutButton,
-						]}
+					<View
 					>
-						<View>
-							<Svg
-								height={"40px"}
-								width={"40px"}
-								preserveAspectRatio="xMinYMin slice"
-							>
-								{retrieveSVGAssetFromUnicode(emoji)}
-							</Svg>
-						</View>
-					</Pressable>
+						<Pressable style={[styles.checkInEmojiShortcutButton, {
+							backgroundColor: checkInShortcutColors[index],
+                            height: "100%"
+						}]}>
+							<View>
+								<Svg
+									height={"40px"}
+									width={"40px"}
+									preserveAspectRatio="xMinYMin slice"
+								>
+									{retrieveSVGAssetFromUnicode(emoji)}
+								</Svg>
+							</View>
+						</Pressable>
+					</View>
 				))}
 			</View>
 		</View>
@@ -58,16 +61,14 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderBottomLeftRadius: 15,
 		borderTopLeftRadius: 15,
-        marginRight: 2,
 	},
 	addSpecificCheckInSection: {
 		flex: 0.4,
 		flexDirection: "row",
 		justifyContent: "space-evenly",
 		alignItems: "center",
-        backgroundColor: "#DFE7FD",
-        marginLeft: 2,
-        borderBottomRightRadius: 15, borderTopRightRadius: 15
+		borderBottomRightRadius: 15,
+		borderTopRightRadius: 15,
 	},
 	checkInEmojiShortcutButton: {
 		justifyContent: "center",

@@ -13,7 +13,7 @@ export default function App() {
     <Provider store={store}>
       <ApplicationProvider {...eva} theme={{...eva.light, ...theme}}>
         <SafeAreaProvider>
-          <StatusBar />
+          <StatusBar style="light" />
           <TabBar
             screenOptions={{
               headerShown: false,

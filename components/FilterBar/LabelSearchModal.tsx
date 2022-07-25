@@ -138,7 +138,7 @@ export function LabelSearchDropdownMenu({ filter, setFilter, iconSize }) {
 				</View>
 			</Modal>
 			<Pressable onPress={() => setLabelMenuVisible(!labelMenuVisible)}>
-				<Icon name="tago" size={iconSize ? iconSize : 25}></Icon>
+				<Icon name="tago" size={iconSize ? iconSize : 25} color="white"></Icon>
 			</Pressable>
 		</View>
 	);

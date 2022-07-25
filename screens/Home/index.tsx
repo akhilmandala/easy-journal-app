@@ -20,7 +20,7 @@ export default function Home({ navigation }) {
 	return (
 		<View style={styles.screen}>
 			<SafeAreaView style={styles.container}>
-        <ScrollView>
+        <ScrollView style={{width: "100%"}}>
 				<CheckInWidgetComponent />
 				<NewCheckInButton />
 				<View
@@ -39,7 +39,7 @@ export default function Home({ navigation }) {
 					</View>
 				</View>
 				<NewEntryWidget labels={labels} />
-        <View style={{height: 200}}></View>
+        <View style={{height: 100}}></View>
         </ScrollView>
 			</SafeAreaView>
 		</View>

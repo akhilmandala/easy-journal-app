@@ -18,7 +18,7 @@ export const CheckInWidgetStatComponent = ({currentFilter, textStyle}) => {
     <View style={styles.container}>
       <View style={{ justifyContent: "center" }}>
         <Text style={[textStyle]}>You've checked in </Text>
-        <Text style={[textStyle, { fontWeight: "600", fontSize: 36 }]}>
+        <Text style={[textStyle, { fontWeight: "400", fontSize: 36 }]}>
           {checkIns.length} times
         </Text>
         <Text style={[textStyle]}>over the past {currentFilter.toLowerCase()}</Text>

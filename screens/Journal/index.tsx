@@ -48,26 +48,11 @@ export default function Journal({ navigation }: Props) {
 
   return (
     <View style={styles.screen}>
-      <RecentCheckInsToolBar />
       <SafeAreaView
-        style={{
-          paddingTop: 72,
-        }}
       >
         <FilterBar  filters={filters} setFilters={setFilters} setShownEntries={setShownEntries} />
         <View style={styles.container}>
-          {/* <FilterBar /> */}
-          <FlatList
-            data={shownEntries}
-            renderItem={(entry) => (
-              <JournalEntryCardShort
-                key={entry.item.id}
-                entry={entry}
-              ></JournalEntryCardShort>
-            )}
-            keyExtractor={(entry) => entry.id}
-            ListFooterComponent={() => <View style={{ height: 200 }}></View>}
-          />
+          
         </View>
       </SafeAreaView>
     </View>

@@ -16,9 +16,9 @@ export function FilterBar({ filters, setFilters }) {
 				}
 			>
 				{filters.ascending ? (
-					<Icon name="upcircleo" size={FILTER_ICON_SIZE}></Icon>
+					<Icon name="upcircleo" size={FILTER_ICON_SIZE} color="white"></Icon>
 				) : (
-					<Icon name="downcircleo" size={FILTER_ICON_SIZE}></Icon>
+					<Icon name="downcircleo" size={FILTER_ICON_SIZE} color="white"></Icon>
 				)}
 			</Pressable>
 			<LabelSearchDropdownMenu filter={filters} setFilter={setFilters} iconSize={FILTER_ICON_SIZE} />
