@@ -10,14 +10,22 @@ import {
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { CustomText } from "../CustomText";
-import { SlidingCounter } from "../../screens/Stat";
+import { SlidingCounter } from "./CheckInShortcutSliderButton";
+import { useDispatch, useSelector } from "react-redux";
+import uuid from "react-native-uuid";
+import dayjs from "dayjs";
+import {
+	addCheckIn,
+	CheckIn,
+	selectLatestCheckIn,
+} from "../../redux/checkIns/checkInsSlice";
 
 export const NewCheckInButton = () => {
 	const [visible, setVisible] = React.useState(false);
 	let [shortcutEmojis, setShortcutEmojis] = useState([
-		"1F642",
-		"1F610",
-		"2639",
+		{ unicode: "1F642", iconName: "slightly-smiling-face" },
+		{ unicode: "1F610", iconName: "neutral-face" },
+		{ unicode: "2639", iconName: "frowning-face" },
 	]);
 	console.log(shortcutEmojis);
 	let checkInShortcutColors = ["#f6bd60", "#9f86c0", "#f28482"];
@@ -43,6 +51,32 @@ export const NewCheckInButton = () => {
 		};
 	});
 
+	const positiveShortcutEmojis = [
+		{ unicode: "1F642", iconName: "slightly-smiling-face" },
+		{ unicode: "1F603", iconName: "grinning-face-with-big-eyes" },
+		{ unicode: "1F923", iconName: "rolling-on-the-floor-laughing" },
+		{ unicode: "1F970", iconName: "smiling-face-with-hearts" },
+		{ unicode: "1F973", iconName: "partying-face" },
+	];
+	const neutralShortcutEmojis = [
+		{ unicode: "1F610", iconName: "neutral-face" },
+		{ unicode: "1F612", iconName: "unamused-face" },
+		{ unicode: "1F623", iconName: "persevering-face" },
+		{ unicode: "1F92F", iconName: "exploding-head" },
+		{ unicode: "1F62A", iconName: "sleepy-face" },
+	];
+	const negativeShortcutEmojis = [
+        { unicode: "2639", iconName: "frowning-face" },
+		{ unicode: "1F621", iconName: "pouting-face" },
+		{ unicode: "1F631", iconName: "face-screaming-in-fear" },
+		{ unicode: "1F975", iconName: "loudly-crying-face" },
+		{ unicode: "1F976", iconName: "cold-face" },
+	];
+    let checkInOptionMappings = [positiveShortcutEmojis, neutralShortcutEmojis, negativeShortcutEmojis]
+
+	const dispath = useDispatch();
+	let latestCheckIn = useSelector(selectLatestCheckIn);
+
 	return (
 		<View style={styles.container}>
 			<Pressable style={[styles.mainNewCheckInButton]}>
@@ -50,8 +84,32 @@ export const NewCheckInButton = () => {
 			</Pressable>
 			<View style={[styles.addSpecificCheckInSection]}>
 				{shortcutEmojis.map((emoji, index) => (
-					<View style={[styles.checkInEmojiShortcutButton, {height: "100%", backgroundColor:checkInShortcutColors[index]}]}>
-						<SlidingCounter />
+					<View
+						style={[
+							styles.checkInEmojiShortcutButton,
+							{
+								height: "100%",
+								backgroundColor: checkInShortcutColors[index],
+							},
+						]}
+						key={index}
+					>
+						<SlidingCounter
+							onSelect={(emoji) =>
+								dispath(
+									addCheckIn({
+										newCheckIn: {
+											emotion: emoji.unicode,
+											id: String(uuid.v4()),
+											date: dayjs().unix(),
+											order: latestCheckIn.order + 1,
+											iconName: emoji.iconName,
+										},
+									})
+								)
+							}
+							options={checkInOptionMappings[index]}
+						/>
 					</View>
 				))}
 			</View>
@@ -88,6 +146,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		height: "100%",
-        width: 40
+		width: 40,
 	},
 });

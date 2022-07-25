@@ -1,10 +1,11 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
 	PanGestureHandler,
 	PanGestureHandlerGestureEvent,
 	GestureHandlerRootView,
+    TapGestureHandler,
 } from "react-native-gesture-handler";
 import { Svg } from "react-native-svg";
 import Animated, {
@@ -24,46 +25,41 @@ const clamp = (value: number, min: number, max: number) => {
 	return Math.min(Math.max(value, min), max);
 };
 
-const BUTTON_WIDTH = 170;
-
-const SlidingCounter = () => {
-	let [shortcutEmojis, setShortcutEmojis] = useState([
-		"1F642",
-		"1F610",
-		"2639",
-	]);
+export const SlidingCounter = ({options, onSelect}) => {
 
 	const translateX = useSharedValue(0);
 	const translateY = useSharedValue(0);
 
 	const [count, setCount] = useState(0);
-
-	const MAX_SLIDE_OFFSET = BUTTON_WIDTH * 0.3;
+  console.log(count)
+	const MAX_SLIDE_OFFSET = 150 * 0.3;
 
 	// wrapper function
 	const incrementCount = useCallback(() => {
-		// external library function
-		setCount((currentCount) => currentCount + 1);
-	}, []);
+    if(count == options.length - 1) {
+      setCount(0)
+    } else {
+      setCount(count + 1);
+	}}, [count, options]);
 
 	const decrementCount = useCallback(() => {
-		setCount((currentCount) => currentCount - 1);
-	}, []);
-
-	const resetCount = useCallback(() => {
-		setCount(0);
-	}, []);
+    if(count == 0) {
+      setCount(options.length - 1)
+    } else {
+      setCount(count - 1);
+    }
+	}, [count, options]);
 
 	const onPanGestureEvent =
 		useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
 			onActive: (event) => {
-				translateX.value = clamp(
-					event.translationX,
+				translateX.value = clamp(event.translationX, 0, 0);
+
+				translateY.value = clamp(
+					event.translationY,
 					-MAX_SLIDE_OFFSET,
 					MAX_SLIDE_OFFSET
 				);
-
-				translateY.value = clamp(event.translationY, 0, MAX_SLIDE_OFFSET);
 			},
 			onEnd: () => {
 				if (translateX.value === MAX_SLIDE_OFFSET) {
@@ -73,7 +69,9 @@ const SlidingCounter = () => {
 					// Decrement
 					runOnJS(decrementCount)();
 				} else if (translateY.value === MAX_SLIDE_OFFSET) {
-					runOnJS(resetCount)();
+					runOnJS(decrementCount)();
+				} else if (translateY.value === -MAX_SLIDE_OFFSET) {
+					runOnJS(incrementCount)();
 				}
 
 				translateX.value = withSpring(0);
@@ -90,58 +88,9 @@ const SlidingCounter = () => {
 		};
 	}, []);
 
-	const rPlusMinusIconStyle = useAnimatedStyle(() => {
-		const opacityX = interpolate(
-			translateX.value,
-			[-MAX_SLIDE_OFFSET, 0, MAX_SLIDE_OFFSET],
-			[0.4, 0.8, 0.4]
-		);
-
-		const opacityY = interpolate(
-			translateY.value,
-			[0, MAX_SLIDE_OFFSET],
-			[1, 0]
-		);
-
-		return {
-			opacity: opacityX * opacityY,
-		};
-	}, []);
-
-	const rCloseIconStyle = useAnimatedStyle(() => {
-		const opacity = interpolate(
-			translateY.value,
-			[0, MAX_SLIDE_OFFSET],
-			[0, 0.8]
-		);
-
-		return {
-			opacity,
-		};
-	}, []);
-
-	const rButtonStyle = useAnimatedStyle(() => {
-		return {
-			transform: [
-				{
-					translateX: translateX.value * 0.1,
-				},
-				{ translateY: translateY.value * 0.1 },
-			],
-		};
-	}, []);
 
 	return (
-		<Animated.View style={[styles.button, rButtonStyle]}>
-			<Animated.View style={rPlusMinusIconStyle}>
-				<AntDesign name="minus" color={"white"} size={ICON_SIZE} />
-			</Animated.View>
-			<Animated.View style={rCloseIconStyle}>
-				<AntDesign name="close" color={"white"} size={ICON_SIZE} />
-			</Animated.View>
-			<Animated.View style={rPlusMinusIconStyle}>
-				<AntDesign name="plus" color={"white"} size={ICON_SIZE} />
-			</Animated.View>
+		<View>
 			<View
 				style={{
 					...StyleSheet.absoluteFillObject,
@@ -151,45 +100,30 @@ const SlidingCounter = () => {
 			>
 				<PanGestureHandler onGestureEvent={onPanGestureEvent}>
 					<Animated.View style={[styles.circle, rStyle]}>
+                        <Pressable onPress={() => {onSelect(options[count])}}>
 						<Svg
 							height={"40px"}
 							width={"40px"}
 							preserveAspectRatio="xMinYMin slice"
 						>
-							{retrieveSVGAssetFromUnicode(shortcutEmojis[count])}
+							{retrieveSVGAssetFromUnicode(options[count].unicode)}
 						</Svg>
+                        </Pressable>
 					</Animated.View>
 				</PanGestureHandler>
 			</View>
-		</Animated.View>
+		</View>
 	);
 };
 
-export default function Stat() {
-	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
-			<View style={styles.container}>
-				<SlidingCounter />
-			</View>
-		</GestureHandlerRootView>
-	);
-}
-
 const styles = StyleSheet.create({
-	container: {
-		alignItems: "center",
-		justifyContent: "center",
-		alignSelf: "center",
-		paddingTop: 72,
-	},
 	button: {
-		height: 70,
-		width: BUTTON_WIDTH,
+		height: 150,
+		width: 50,
 		backgroundColor: "#111111",
-		borderRadius: 50,
 		alignItems: "center",
-		justifyContent: "space-evenly",
-		flexDirection: "row",
+		justifyContent: "space-between",
+		flexDirection: "column",
 	},
 	countText: {
 		fontSize: 25,
@@ -198,7 +132,6 @@ const styles = StyleSheet.create({
 	circle: {
 		height: 50,
 		width: 50,
-		backgroundColor: "#232323",
 		borderRadius: 25,
 		position: "absolute",
 		justifyContent: "center",
