@@ -63,67 +63,87 @@ const PLACEHOLDER_TEXT =
 
 export const NewEntryFormRedesigned = ({ setVisible }) => {
 	console.log(Dimensions.get("window"));
+	//TODO: Option to load previous draft
+	let id = String(uuid.v4());
+	let latestEntry = useSelector(selectMostRecentJournalEntry);
+	let entryDraftBase: JournalEntry = {
+		id,
+		emotion: "",
+		title: "",
+		content: "",
+		labels: [],
+		date: dayjs().unix(),
+		order: latestEntry.order + 1,
+	};
+
+	const [draft, setDraft] = React.useState<JournalEntry>(entryDraftBase);
+
 	return (
-		<TouchableWithoutFeedback
-			onPress={() => {
-				Keyboard.dismiss();
-			}}
-		>
-			<View
-				style={[
-					StyleSheet.absoluteFill,
-					{
-						top: Dimensions.get("screen").height - 300,
-						left: Dimensions.get("screen").width / 4,
-						height: 100,
-						width: 200,
-						backgroundColor: "#f4978e",
-						borderRadius: 35,
-					},
-				]}
-			>
-				<Pressable
-					onPress={() => {
-						setVisible(false);
-					}}
-					style={[
-						{
-							height: "100%",
-							width: "100%",
-							alignItems: "center",
-							justifyContent: "center",
-						},
-					]}
-				>
-					<CustomText style={[{ color: "black" }]}> SAVE </CustomText>
-				</Pressable>
-			</View>
-			<View style={{ height: "100%", width: "100%", paddingHorizontal: 20 }}>
-				<View style={{ flexDirection: "row" }}>
-					<TextInput
-						placeholder="Title..."
-						style={[styles.largeText, styles.titleInput, { flex: 0.9 }]}
-					></TextInput>
-					<View style={[{ flex: 0.1, alignSelf: "flex-end" }]}>
-						<TabBarIcon name="tago" style={{ color: "#f4978e" }} />
-					</View>
+		<Formik initialValues={draft} onSubmit={(values) => console.log(values)}>
+			{({ handleChange, handleBlur, values }) => (
+				<View style={{ height: "100%", width: "100%", paddingHorizontal: 20 }}>
+					<TouchableWithoutFeedback
+						onPress={() => {
+							Keyboard.dismiss();
+						}}
+					>
+						<View style={{ flexDirection: "row" }}>
+							<TextInput
+								placeholder="Title..."
+								style={[styles.largeText, styles.titleInput, { flex: 0.9 }]}
+								onChangeText={handleChange("title")}
+								onBlur={handleBlur("title")}
+								value={values.title}
+							></TextInput>
+							<View style={[{ flex: 0.1, alignSelf: "flex-end" }]}>
+								<TabBarIcon name="tago" style={{ color: "#f4978e" }} />
+							</View>
+						</View>
+						<View>
+							<EmojiPickerInputComponent handleChange={handleChange} />
+						</View>
+						<View style={{ width: "100%", height: 400 }}>
+							<TextInput
+								style={[styles.entryText, styles.entryInput]}
+								multiline
+								placeholder={PLACEHOLDER_TEXT}
+								onChangeText={handleChange("content")}
+								onBlur={handleBlur("content")}
+								value={values.content}
+							/>
+						</View>
+					</TouchableWithoutFeedback>
+
+					<Pressable
+						onPress={() => {
+							console.log(values);
+							setVisible(false);
+							if (values !== entryDraftBase) {
+								addEntry({ ...draft, ...values });
+							}
+							setVisible(false);
+						}}
+						style={[
+							{
+								height: 100,
+								width: 200,
+								backgroundColor: "#f4978e",
+								borderRadius: 35,
+								alignSelf: "center",
+								alignItems: "center",
+								justifyContent: "center",
+							},
+						]}
+					>
+						<View>
+							<CustomText style={[{ color: "black" }]}> SAVE </CustomText>
+						</View>
+					</Pressable>
 				</View>
-				<View>
-					<EmojiPickerInputComponent />
-				</View>
-				<View style={{ width: "100%", height: 400 }}>
-					<TextInput
-						style={[styles.entryText, styles.entryInput]}
-						multiline
-						placeholder={PLACEHOLDER_TEXT}
-					/>
-				</View>
-			</View>
-		</TouchableWithoutFeedback>
+			)}
+		</Formik>
 	);
 };
-
-const EmojiPickerInput = connect(EmojiPickerInputComponent);
 
 export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
 	//TODO: Option to load previous draft
@@ -189,7 +209,7 @@ export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
 									}}
 								/>
 							</View>
-							<EmojiPickerInput handleChange={handleChange} />
+							<EmojiPickerInputComponent handleChange={handleChange} />
 							<TouchableOpacity
 								activeOpacity={1}
 								onPress={() => Keyboard.dismiss()}

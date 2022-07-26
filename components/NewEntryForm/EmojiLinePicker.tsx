@@ -5,8 +5,9 @@ import {
 } from "react-native";
 import { Svg } from "react-native-svg";
 import { retrieveSVGAssetFromUnicode } from "../../utils/SVGImports";
+import { connect } from "formik";
 
-export const EmojiPickerInputComponent = ({
+export const EmojiPickerInputComponent = connect(({
 	handleChange,
 	handleBlur,
 	values,
@@ -82,4 +83,4 @@ export const EmojiPickerInputComponent = ({
 			</View>
 		</View>
 	);
-};
+});
