@@ -29,6 +29,7 @@ export const EmojiPickerInputComponent = connect(({
 	);
 
 	let handleEmotionClick = ({ emoji }) => {
+        console.log(emoji)
 		if (emotionChoice == emoji) {
 			setEmotionChoice("");
 			props.formik.setFieldValue("emotion", "");
@@ -65,7 +66,7 @@ export const EmojiPickerInputComponent = connect(({
 							<View
 								style={{
 									borderBottomWidth: emotionChoice == emoji ? 3 : 0,
-									borderColor: "rgb(60,105,246)",
+									borderColor: "#d62828",
 									paddingBottom: emotionChoice == emoji ? 0 : 3,
 								}}
 							>

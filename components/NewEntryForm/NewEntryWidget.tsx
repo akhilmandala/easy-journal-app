@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Button, Card, Layout, Modal } from "@ui-kitten/components";
 import { NewEntryFormRedesigned, NewEntryWidgetForm } from "./NewEntryForm";
@@ -7,6 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export const NewEntryWidget = ({ labels }) => {
 	const [visible, setVisible] = React.useState(false);
+	let [entryForm, setModal] = useState(
+		<NewEntryFormRedesigned setVisible={setVisible} />
+	);
 
 	return (
 		<View style={styles.container}>
@@ -20,7 +23,15 @@ export const NewEntryWidget = ({ labels }) => {
 			</Pressable>
 			<View style={[styles.addEntryWithLabelButtonColumn]}>
 				<Pressable
-					onPress={() => setVisible(true)}
+					onPress={() => {
+						setVisible(true);
+						setModal(
+							<NewEntryFormRedesigned
+								setVisible={setVisible}
+								editDraft={{ labels: [labels[1]] }}
+							/>
+						);
+					}}
 					style={[
 						styles.addEntryWithLabelButton,
 						{
@@ -36,7 +47,15 @@ export const NewEntryWidget = ({ labels }) => {
 					</View>
 				</Pressable>
 				<Pressable
-					onPress={() => setVisible(true)}
+					onPress={() => {
+						setVisible(true);
+						setModal(
+							<NewEntryFormRedesigned
+								setVisible={setVisible}
+								editDraft={{ labels: [labels[1]] }}
+							/>
+						);
+					}}
 					style={[
 						styles.addEntryWithLabelButton,
 						{
@@ -54,9 +73,7 @@ export const NewEntryWidget = ({ labels }) => {
 			</View>
 
 			<Modal visible={visible} style={styles.newEntryFormContainer}>
-				<SafeAreaView>
-					<NewEntryFormRedesigned setVisible={setVisible}/>
-				</SafeAreaView>
+				<SafeAreaView>{entryForm}</SafeAreaView>
 			</Modal>
 		</View>
 	);
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
 		height: "100%",
 		width: "100%",
 		backgroundColor: "#FAD2E1",
-		paddingTop: 80
+		paddingTop: 80,
 	},
 	text: {
 		color: "black",

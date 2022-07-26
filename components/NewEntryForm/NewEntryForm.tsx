@@ -18,7 +18,7 @@ import {
 import uuid from "react-native-uuid";
 import dayjs from "dayjs";
 import { Formik, connect } from "formik";
-import { useSelector, connect as connectRedux } from "react-redux";
+import { useSelector, connect as connectRedux, useDispatch } from "react-redux";
 import { selectMostRecentJournalEntry } from "../../redux/journalEntries/journalEntriesSlice";
 import { LabelSearchDropdownMenu } from "../FilterBar/LabelSearchModal";
 import {
@@ -61,20 +61,24 @@ const styles = StyleSheet.create({
 const PLACEHOLDER_TEXT =
 	"................................................................................................\n\n\n\n\n\n..........................................................................................\n\n\n\n\n\n.............................................................................................!";
 
-export const NewEntryFormRedesigned = ({ setVisible }) => {
+export const NewEntryFormRedesigned = ({ setVisible, editDraft = {} }) => {
 	console.log(Dimensions.get("window"));
 	//TODO: Option to load previous draft
 	let id = String(uuid.v4());
 	let latestEntry = useSelector(selectMostRecentJournalEntry);
 	let entryDraftBase: JournalEntry = {
-		id,
-		emotion: "",
-		title: "",
-		content: "",
-		labels: [],
-		date: dayjs().unix(),
-		order: latestEntry.order + 1,
+		...{
+			id,
+			emotion: "",
+			title: "",
+			content: "",
+			labels: [],
+			date: dayjs().unix(),
+			order: latestEntry.order + 1,
+		},
+		...editDraft,
 	};
+	const dispath = useDispatch();
 
 	const [draft, setDraft] = React.useState<JournalEntry>(entryDraftBase);
 
@@ -82,26 +86,34 @@ export const NewEntryFormRedesigned = ({ setVisible }) => {
 		<Formik initialValues={draft} onSubmit={(values) => console.log(values)}>
 			{({ handleChange, handleBlur, values }) => (
 				<View style={{ height: "100%", width: "100%", paddingHorizontal: 20 }}>
+					<View
+						style={{ flexDirection: "row", justifyContent: "space-between" }}
+					>
+						<TouchableWithoutFeedback
+							onPress={() => {
+								Keyboard.dismiss();
+							}}
+						>
+							<TextInput
+								placeholder="Title..."
+								style={[styles.largeText, styles.titleInput]}
+								onChangeText={handleChange("title")}
+								onBlur={handleBlur("title")}
+								value={values.title}
+							></TextInput>
+						</TouchableWithoutFeedback>
+						<View style={[{ flex: 0.1, alignSelf: "flex-end" }]}>
+							<LabelSearchDropdownMenu filter={values} setFilter={({labels}) => values.labels = labels}/>
+						</View>
+					</View>
+					<View>
+						<EmojiPickerInputComponent handleChange={handleChange} />
+					</View>
 					<TouchableWithoutFeedback
 						onPress={() => {
 							Keyboard.dismiss();
 						}}
 					>
-						<View style={{ flexDirection: "row" }}>
-							<TextInput
-								placeholder="Title..."
-								style={[styles.largeText, styles.titleInput, { flex: 0.9 }]}
-								onChangeText={handleChange("title")}
-								onBlur={handleBlur("title")}
-								value={values.title}
-							></TextInput>
-							<View style={[{ flex: 0.1, alignSelf: "flex-end" }]}>
-								<TabBarIcon name="tago" style={{ color: "#f4978e" }} />
-							</View>
-						</View>
-						<View>
-							<EmojiPickerInputComponent handleChange={handleChange} />
-						</View>
 						<View style={{ width: "100%", height: 400 }}>
 							<TextInput
 								style={[styles.entryText, styles.entryInput]}
@@ -116,10 +128,8 @@ export const NewEntryFormRedesigned = ({ setVisible }) => {
 
 					<Pressable
 						onPress={() => {
-							console.log(values);
-							setVisible(false);
 							if (values !== entryDraftBase) {
-								addEntry({ ...draft, ...values });
+								dispath(addEntry({ payload: { ...draft, ...values } }));
 							}
 							setVisible(false);
 						}}
@@ -144,123 +154,3 @@ export const NewEntryFormRedesigned = ({ setVisible }) => {
 		</Formik>
 	);
 };
-
-export const NewEntryWidgetFormComponent = ({ setVisible, addEntry }) => {
-	//TODO: Option to load previous draft
-	let drafts;
-	let id = String(uuid.v4());
-	let latestEntry = useSelector(selectMostRecentJournalEntry);
-	let entryDraft: JournalEntry = {
-		id,
-		emotion: "",
-		title: "",
-		content: "",
-		labels: [],
-		date: dayjs().unix(),
-		order: latestEntry.order + 1,
-	};
-
-	const [draft, setDraft] = React.useState<JournalEntry>(entryDraft);
-	const DEFAULT_INITIAL_VALUES = {
-		emotion: "",
-		title: "",
-		content: "",
-		labels: [],
-	};
-	return (
-		<Card
-			disabled={true}
-			style={{
-				height: "100%",
-				width: "100%",
-				alignItems: "center",
-				justifyContent: "flex-start",
-			}}
-		>
-			<Formik
-				initialValues={DEFAULT_INITIAL_VALUES}
-				onSubmit={(values) => console.log(values)}
-			>
-				{({ handleChange, handleBlur, values }) => (
-					<View>
-						<ScrollView
-							style={styles.formContainer}
-							keyboardShouldPersistTaps="handled"
-						>
-							<View
-								style={{
-									flexDirection: "row",
-									width: "100%",
-									justifyContent: "space-evenly",
-								}}
-							>
-								<Input
-									placeholder="Title"
-									onChangeText={handleChange("title")}
-									onBlur={handleBlur("title")}
-									value={values.title}
-									style={{ flex: 1, marginRight: 10 }}
-								/>
-								<LabelSearchDropdownMenu
-									iconSize={20}
-									filter={values}
-									setFilter={({ labels: newLabels }) => {
-										values.labels = newLabels;
-									}}
-								/>
-							</View>
-							<EmojiPickerInputComponent handleChange={handleChange} />
-							<TouchableOpacity
-								activeOpacity={1}
-								onPress={() => Keyboard.dismiss()}
-								style={{ width: "100%" }}
-							>
-								<Input
-									placeholder="Write whatever you need.."
-									size="large"
-									multiline={true}
-									textStyle={{ height: 400 }}
-									numberOfLines={20}
-									onChangeText={handleChange("content")}
-									onBlur={handleBlur("content")}
-									value={values.content}
-								/>
-							</TouchableOpacity>
-						</ScrollView>
-						<KeyboardAvoidingView
-							behavior={Platform.OS === "ios" ? "padding" : "height"}
-							style={{
-								flex: 1,
-							}}
-							keyboardVerticalOffset={100}
-						>
-							<Button
-								onPress={() => {
-									if (values !== DEFAULT_INITIAL_VALUES) {
-										addEntry({ ...entryDraft, ...values });
-									}
-									setVisible(false);
-								}}
-								style={{}}
-							>
-								SUBMIT
-							</Button>
-						</KeyboardAvoidingView>
-					</View>
-				)}
-			</Formik>
-		</Card>
-	);
-};
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-		addEntry: (entry) => {
-			dispatch(addEntry({ entry }));
-		},
-	};
-};
-export const NewEntryWidgetForm = connectRedux(
-	null,
-	mapDispatchToProps
-)(NewEntryWidgetFormComponent);

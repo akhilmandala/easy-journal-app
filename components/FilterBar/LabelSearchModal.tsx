@@ -104,7 +104,7 @@ export function LabelSearchDropdownMenu({ filter, setFilter, iconSize }) {
 						style={{ width: "100%", height: 150, paddingBottom: 20 }}
 						data={possibleLabelsToPick}
 						renderItem={renderItem}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(label) => label.id}
 					/>
 					<Pressable
 						onPress={() => {

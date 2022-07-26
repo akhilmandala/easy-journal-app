@@ -37,9 +37,9 @@ export const journalEntriesSlice = createSlice({
 			}>
 		) {
 			let { entry } = action.payload;
-			let newLabels = entry.labels.filter(
+			let newLabels = entry.labels ? entry.labels.filter(
 				(label) => !state.labels.includes(label)
-			);
+			) : [];
 			return {
 				...state,
 				entries: {

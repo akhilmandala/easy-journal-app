@@ -103,7 +103,8 @@ export const TabBar = (props) => {
       <BottomTab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: "blue",
+          tabBarActiveTintColor: "#ffc300",
+          tabBarInactiveTintColor: "#f8edeb",
           tabBarStyle: { ...styles.tabBar },
           tabBarIconStyle: {
             "alignContent": "center",
